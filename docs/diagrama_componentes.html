@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Motora · Diagrama de componentes</title>
+  <style>
+    :root{--ink:#12201d;--ink2:#1b302b;--paper:#f7f5f0;--card:#fff;--line:#dce3dd;--orange:#f05a24;--green:#3eb584;--blue:#2a89b8;--gold:#e7aa37;--muted:#64716c}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}.page{max-width:1180px;margin:auto;padding:42px 24px 62px}.top{display:flex;gap:20px;justify-content:space-between;align-items:flex-start;margin-bottom:35px}.brand{display:flex;align-items:center;gap:10px;color:var(--orange);font-weight:800;letter-spacing:2px}.mark{display:grid;place-items:center;width:32px;height:32px;color:white;background:var(--orange);clip-path:polygon(50% 0,100% 24%,100% 76%,50% 100%,0 76%,0 24%)}h1{font-size:clamp(29px,4vw,47px);letter-spacing:-2px;line-height:1.05;margin:12px 0 8px}.subtitle{max-width:680px;color:var(--muted);margin:0}.tag{color:var(--green);font:700 11px ui-monospace,monospace;letter-spacing:1.3px}.legend{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}.legend span{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}.dot{width:9px;height:9px;border-radius:50%}.flow{display:grid;gap:13px}.layer{display:grid;grid-template-columns:175px 1fr;gap:22px;align-items:stretch}.layer-label{padding:21px 0 0;border-top:2px solid var(--line)}.layer-label strong{display:block;font-size:17px}.layer-label small{display:block;color:var(--muted);margin-top:4px}.node-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.node{position:relative;min-height:126px;padding:18px;border:1px solid var(--line);border-radius:15px;background:var(--card);box-shadow:0 10px 24px #12201d0a}.node:after{content:"";position:absolute;top:50%;right:-13px;width:13px;border-top:2px solid var(--line)}.node:before{content:"›";position:absolute;right:-17px;top:calc(50% - 12px);z-index:2;color:var(--muted);font-size:20px}.node:last-child:after,.node:last-child:before{display:none}.icon{display:grid;place-items:center;width:29px;height:29px;border-radius:8px;color:#fff;font-weight:800;margin-bottom:12px}.vue{background:var(--green)}.api{background:var(--blue)}.domain{background:var(--orange)}.data{background:var(--gold)}.node h2{font-size:15px;line-height:1.2;margin:0 0 6px}.node p{margin:0;color:var(--muted);font-size:12px}.thin-arrow{height:30px;display:grid;grid-template-columns:175px 1fr;gap:22px;align-items:center}.shaft{height:2px;background:linear-gradient(90deg,var(--orange),var(--green));position:relative}.shaft:after{content:"";position:absolute;right:-1px;top:-4px;border:5px solid transparent;border-left-color:var(--green)}.security{margin:32px 0 22px;padding:19px 22px;border-left:4px solid var(--orange);background:#fff0eb;border-radius:0 12px 12px 0}.security strong{display:block;margin-bottom:4px}.security p{margin:0;color:#70402d;font-size:13px}.bottom{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px}.panel{padding:20px 22px;background:var(--ink);border-radius:15px;color:#fff}.panel.alt{background:var(--ink2)}.panel h3{font-size:14px;margin:0 0 9px;color:#fff}.panel p{font-size:12px;line-height:1.6;margin:0;color:#c9d4cf}code{font:12px ui-monospace,SFMono-Regular,Menlo,monospace;color:#ffb79b}@media(max-width:850px){.layer,.thin-arrow{grid-template-columns:1fr}.layer-label{padding-top:12px}.node-row{grid-template-columns:repeat(2,1fr)}.thin-arrow{display:none}.node:nth-child(2):after,.node:nth-child(2):before{display:none}}@media(max-width:520px){.page{padding:28px 16px}.top{display:block}.node-row{grid-template-columns:1fr}.node:after,.node:before{display:none}.bottom{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="top">
+      <div>
+        <div class="brand"><span class="mark">M</span> MOTORA</div>
+        <h1>Componentes del sistema</h1>
+        <p class="subtitle">El recorrido protegido del registro, consulta y modificación de clientes. Las flechas representan el flujo principal de una solicitud.</p>
+        <div class="legend"><span><i class="dot" style="background:var(--green)"></i> Interfaz</span><span><i class="dot" style="background:var(--blue)"></i> API</span><span><i class="dot" style="background:var(--orange)"></i> Dominio</span><span><i class="dot" style="background:var(--gold)"></i> Persistencia</span></div>
+      </div>
+      <div class="tag">VUE · DJANGO · MYSQL</div>
+    </header>
+
+    <section class="flow" aria-label="Diagrama de arquitectura">
+      <div class="layer">
+        <div class="layer-label"><strong>1. Interfaz</strong><small>Vue 3 + Vite</small></div>
+        <div class="node-row">
+          <article class="node"><div class="icon vue">V</div><h2>Login y sesión</h2><p>Solicita CSRF, inicia o cierra sesión y muestra el rol activo.</p></article>
+          <article class="node"><div class="icon vue">F</div><h2>Registrar cliente</h2><p>Formulario multipart con mensajes de validación por campo.</p></article>
+          <article class="node"><div class="icon vue">C</div><h2>Consultar clientes</h2><p>Tarjetas con nombre y foto obtenidas de la API.</p></article>
+          <article class="node"><div class="icon vue">E</div><h2>Detalle y edición</h2><p>Consulta el registro completo y permite actualizar datos o foto.</p></article>
+        </div>
+      </div>
+      <div class="thin-arrow"><span></span><div class="shaft" aria-hidden="true"></div></div>
+      <div class="layer">
+        <div class="layer-label"><strong>2. API</strong><small>Django REST</small></div>
+        <div class="node-row">
+          <article class="node"><div class="icon api">CS</div><h2>CSRF y sesión</h2><p>Protege cambios de estado y conserva la autenticación.</p></article>
+          <article class="node"><div class="icon api">R</div><h2>Rutas REST</h2><p><code>/api/clients/</code> lista; detalle usa GET y PUT.</p></article>
+          <article class="node"><div class="icon api">AU</div><h2>Autorización</h2><p><code>roles_required</code> permite sólo ADMIN y RECEPCION.</p></article>
+          <article class="node"><div class="icon api">J</div><h2>JSON</h2><p>Traduce solicitudes y respuestas sin exponer el ORM a Vue.</p></article>
+        </div>
+      </div>
+      <div class="thin-arrow"><span></span><div class="shaft" aria-hidden="true"></div></div>
+      <div class="layer">
+        <div class="layer-label"><strong>3. Dominio</strong><small>Facade</small></div>
+        <div class="node-row">
+          <article class="node"><div class="icon domain">FC</div><h2>ClientFacade</h2><p>Coordina alta, detalle, listado y actualización.</p></article>
+          <article class="node"><div class="icon domain">V</div><h2>Validador</h2><p>Campos, teléfonos, fechas, correo, CP y foto PNG/JPG de hasta 15 MB.</p></article>
+          <article class="node"><div class="icon domain">D</div><h2>Duplicados</h2><p>Correo, teléfono o nombre con fecha de nacimiento; excluye el propio ID al editar.</p></article>
+          <article class="node"><div class="icon domain">S</div><h2>Seeder</h2><p>Crea Administrador y Recepcionista con contraseñas hasheadas desde variables.</p></article>
+        </div>
+      </div>
+      <div class="thin-arrow"><span></span><div class="shaft" aria-hidden="true"></div></div>
+      <div class="layer">
+        <div class="layer-label"><strong>4. Datos</strong><small>Repository + MySQL</small></div>
+        <div class="node-row">
+          <article class="node"><div class="icon data">RP</div><h2>ClientRepository</h2><p>Único componente que utiliza consultas ORM de clientes.</p></article>
+          <article class="node"><div class="icon data">DB</div><h2>Tabla clientes</h2><p>Datos personales, dirección, teléfonos, correos y referencia de fotografía.</p></article>
+          <article class="node"><div class="icon data">UQ</div><h2>Índices únicos</h2><p>Refuerzan en MySQL la prevención de registros duplicados.</p></article>
+          <article class="node"><div class="icon data">M</div><h2>Media</h2><p>Almacena y entrega las fotografías adjuntas por la ruta <code>/media/</code>.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <aside class="security"><strong>Regla de acceso</strong><p>Sin sesión, la API responde 401 y Vue vuelve al login. Con sesión sin rol autorizado, responde 403 con “Acceso no autorizado”. La protección se aplica en el servidor, no sólo en el menú.</p></aside>
+    <section class="bottom">
+      <article class="panel"><h3>Contenedores Docker</h3><p><code>frontend:5173</code> entrega Vue · <code>backend:8000</code> entrega Django · <code>db</code> ejecuta MySQL y conserva los datos en un volumen.</p></article>
+      <article class="panel alt"><h3>Separación de responsabilidades</h3><p>Vue no accede a MySQL. La vista llama la API, la API invoca la fachada, la fachada aplica reglas y el repositorio persiste el resultado.</p></article>
+    </section>
+  </main>
+</body>
+</html>
