@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="470" viewBox="0 0 1240 470" role="img" aria-labelledby="title desc">
+  <title id="title">Diagrama de componentes del registro de clientes</title>
+  <desc id="desc">Flujo entre usuario autorizado, Vue, controlador Django, fachada, repositorio, MySQL y almacenamiento de fotografías.</desc>
+  <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#df5420"/></marker></defs>
+  <style>text{font-family:Arial,sans-serif;fill:#17201d}.title{font-size:22px;font-weight:bold}.label{font-size:14px;font-weight:bold}.sub{font-size:11px;fill:#56615c}.box{stroke:#356057;stroke-width:2;rx:9;fill:#edf6f2}.data{stroke:#b7562b;stroke-width:2;rx:9;fill:#fff4ed}.tech{stroke:#56615c;stroke-width:2;rx:9;fill:#f3f4f1}.line{stroke:#df5420;stroke-width:2.2;marker-end:url(#arrow)}</style>
+  <rect width="1240" height="470" fill="#fbfaf7"/><text x="40" y="48" class="title">Motora · Componentes del registro de clientes</text>
+  <rect class="box" x="35" y="170" width="145" height="78"/><text class="label" x="55" y="202">Administrador /</text><text class="label" x="55" y="222">Recepcionista</text><text class="sub" x="55" y="239">rol autorizado</text>
+  <rect class="box" x="230" y="170" width="160" height="78"/><text class="label" x="257" y="202">Vue</text><text class="sub" x="257" y="222">Formulario Clientes</text><text class="sub" x="257" y="237">multipart/form-data</text>
+  <rect class="box" x="440" y="170" width="160" height="78"/><text class="label" x="466" y="202">Django API</text><text class="sub" x="466" y="222">Client Controller</text><text class="sub" x="466" y="237">auth + rol</text>
+  <rect class="box" x="650" y="170" width="160" height="78"/><text class="label" x="680" y="202">ClientFacade</text><text class="sub" x="680" y="222">validación y</text><text class="sub" x="680" y="237">deduplicación</text>
+  <rect class="box" x="860" y="170" width="160" height="78"/><text class="label" x="878" y="202">ClientRepository</text><text class="sub" x="878" y="222">persistencia y</text><text class="sub" x="878" y="237">consulta ORM</text>
+  <rect class="data" x="1070" y="80" width="135" height="75"/><text class="label" x="1090" y="112">Cliente</text><text class="sub" x="1090" y="132">datos validados</text>
+  <rect class="tech" x="1070" y="195" width="135" height="75"/><text class="label" x="1091" y="227">MySQL 8.4</text><text class="sub" x="1091" y="247">tabla cliente</text>
+  <rect class="tech" x="1070" y="310" width="135" height="75"/><text class="label" x="1091" y="342">media_data</text><text class="sub" x="1091" y="362">fotografías</text>
+  <path class="line" d="M180 209 H230"/><text class="sub" x="184" y="196">captura</text><path class="line" d="M390 209 H440"/><text class="sub" x="390" y="196">POST REST</text><path class="line" d="M600 209 H650"/><text class="sub" x="605" y="196">datos</text><path class="line" d="M810 209 H860"/><text class="sub" x="812" y="196">caso de uso</text><path class="line" d="M1020 209 H1045 V117 H1070"/><path class="line" d="M1137 155 V195"/><path class="line" d="M1020 225 H1045 V347 H1070"/>
+  <text x="40" y="430" class="sub">La fachada separa la lógica de registro del controlador HTTP; el repositorio aísla el acceso a datos. Futuras relaciones Cliente–Sucursal pueden agregarse sin cambiar este flujo.</text>
+</svg>
