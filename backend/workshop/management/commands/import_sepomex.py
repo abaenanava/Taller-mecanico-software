@@ -19,7 +19,8 @@ class Command(BaseCommand):
         if path.stat().st_size < 1_000_000:
             raise CommandError('El catálogo es demasiado pequeño para ser el archivo nacional.')
 
-        batch, imported, rows = [], 0, 0
+        before_total = PostalCode.objects.count()
+        batch, attempted, rows = [], 0, 0
         seen = set()
         with path.open('r', encoding='latin-1', newline='') as source:
             for line_number, raw in enumerate(source, start=1):
@@ -39,9 +40,13 @@ class Command(BaseCommand):
                 batch.append(PostalCode(cp=cp, neighborhood=neighborhood, settlement_type=settlement_type, municipality=municipality, state=state))
                 if len(batch) == 1000:
                     PostalCode.objects.bulk_create(batch, batch_size=1000, ignore_conflicts=True)
-                    imported += len(batch); batch.clear()
+                    attempted += len(batch); batch.clear()
             if batch:
                 PostalCode.objects.bulk_create(batch, batch_size=1000, ignore_conflicts=True)
-                imported += len(batch)
+                attempted += len(batch)
         total = PostalCode.objects.count()
-        self.stdout.write(self.style.SUCCESS(f'Filas válidas leídas: {rows}; intentadas: {imported}; total en codigos_postales: {total}.'))
+        created = total - before_total
+        self.stdout.write(self.style.SUCCESS(
+            f'Filas válidas leídas: {rows}; intentadas: {attempted}; '
+            f'nuevos registros: {created}; total en codigos_postales: {total}.'
+        ))

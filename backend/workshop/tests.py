@@ -4,7 +4,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.test.client import BOUNDARY, MULTIPART_CONTENT, encode_multipart
 
-from .models import Client, User, Workshop
+from .models import Client, PostalCode, User, Workshop
 
 
 PNG = b'\x89PNG\r\n\x1a\n' + b'\x00' * 32
@@ -17,6 +17,10 @@ class ClientRegistrationApiTests(TestCase):
         self.administrator = User.objects.create_user(username='admin_test', password='PruebaSegura2026!', role=User.Role.ADMIN)
         self.receptionist = User.objects.create_user(username='reception_test', password='PruebaSegura2026!', role=User.Role.RECEPTION)
         self.viewer = User.objects.create_user(username='viewer_test', password='PruebaSegura2026!', role=User.Role.VIEWER)
+        PostalCode.objects.create(
+            cp='06000', neighborhood='Centro', settlement_type='Colonia',
+            municipality='Cuauhtémoc', state='Ciudad de México',
+        )
         self.workshop = Workshop.objects.create(name='Taller Pruebas', street='Calle Uno', neighborhood='Centro', municipality='Ciudad de México', state='Ciudad de México', postal_code='01000', business_name='Taller Pruebas SA', phone='+525511111111', rfc='TLP010101AAA', contact_email='taller@example.com', photo=SimpleUploadedFile('taller.png', PNG, content_type='image/png'))
 
     def payload(self, **overrides):
@@ -96,6 +100,25 @@ class ClientRegistrationApiTests(TestCase):
         self.assertIn('personal_phone', response.json()['fields'])
         self.assertIn('work_phone', response.json()['fields'])
         self.assertIn('postal_code', response.json()['fields'])
+
+    def test_postal_code_lookup_and_address_catalog_validation(self):
+        """El catálogo se consulta por API y bloquea combinaciones que no le pertenecen."""
+        self.client.force_login(self.receptionist)
+        lookup = self.client.get('/api/codigos-postales/06000/')
+        self.assertEqual(lookup.status_code, 200)
+        self.assertTrue(lookup.json()['verified'])
+        self.assertEqual(lookup.json()['data']['municipality'], 'Cuauhtémoc')
+        self.assertIn('Centro', [item['name'] for item in lookup.json()['data']['neighborhoods']])
+
+        mismatch = self.client.post('/api/clients/register/', self.payload(neighborhood='Colonia incorrecta'))
+        self.assertEqual(mismatch.status_code, 422)
+        self.assertIn('neighborhood', mismatch.json()['fields'])
+
+        manual = self.client.post('/api/clients/register/', self.payload(
+            full_name='Cliente CP Manual', personal_phone='5577777777', personal_email='manual@example.com',
+            postal_code='99999', neighborhood='Colonia Manual', municipality='Municipio Manual', state='Estado Manual',
+        ))
+        self.assertEqual(manual.status_code, 201, manual.content.decode())
 
     def test_admin_creates_workshop_and_reception_cannot(self):
         workshop = {

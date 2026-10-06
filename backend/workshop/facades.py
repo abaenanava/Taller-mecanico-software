@@ -112,7 +112,11 @@ class WorkshopFacade:
         duplicate = self.repository.find_duplicate(**data)
         if duplicate:
             return ClientRegistrationResult(duplicate, False)
-        return ClientRegistrationResult(self.repository.save(photo=photo, **data), True)
+        try:
+            return ClientRegistrationResult(self.repository.save(photo=photo, **data), True)
+        except IntegrityError:
+            # El índice único es la última barrera ante dos solicitudes simultáneas.
+            return ClientRegistrationResult(self.repository.find_duplicate(**data), False)
 
     def list(self):
         return self.repository.list()

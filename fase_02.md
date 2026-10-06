@@ -11,7 +11,7 @@
 | Validación | Completo | Obligatorios, edad, fecha, teléfonos, correo, CP, extensión, firma y límite de 15 MB devuelven mensajes por campo. |
 | Duplicados | Completo | Fachada y tres índices únicos bloquean correo, teléfono y nombre+fecha; al chocar se devuelve el registro existente con 409. |
 | Pruebas automatizadas | Completo | `ClientRegistrationApiTests` recorre alta, lista, edición y duplicado con Administrador y Recepcionista. |
-| Relación sucursal/taller | Pendiente deliberadamente | `Client` no depende de un taller; una futura entidad intermedia puede asociarlo sin rehacer repositorio, fachada ni API. |
+| Relación sucursal/taller | Completo en esta continuación | `Client.workshop` es una FK obligatoria hacia `Workshop`; una entidad de sucursal futura puede ampliar esta relación sin modificar el flujo Facade → Repository. |
 | Recuperación de contraseña, auditoría y rate limiting | Pendiente | Requieren una fase de seguridad operativa y una política de negocio. |
 
 ## Flujo implementado
@@ -35,7 +35,8 @@ La fachada decide si la operación es válida y única; el repositorio persiste.
 | Relación cliente–taller | Completo | `Client.workshop` usa FK `PROTECT`; la migración crea un taller predeterminado y conserva los clientes previos. |
 | Filtros y páginas | Completo | `ClientRepository.list` filtra por taller/estatus, ordena de forma segura y devuelve máximo 10 registros; la API devuelve `total`, `page` y `pages`. |
 | Suspensión | Completo | `ClientFacade.suspend` cambia a `SUSPENDIDO`; API y botón exigen `ADMIN`. |
-| Pruebas | Completo | `ClientRegistrationApiTests` cubre taller duplicado/RFC inválido, rol de Recepción, 12 clientes, páginas, edición, duplicados y suspensión. |
+| Migración de alineación | Completo | `0006_align_client_address_fields` sincroniza longitudes de dirección, CP y estatus declarados por `Client` con MySQL. |
+| Pruebas | Completo | `ClientRegistrationApiTests` cubre taller duplicado/RFC inválido, rol de Recepción, 12 clientes, páginas, edición, duplicados, suspensión, consulta CP, coincidencia de dirección y CP manual no verificado. |
 | Pendiente | No requerido | Edición y detalle de taller no fueron solicitados para esta continuación. |
 
 ### Ejecución del catálogo oficial
@@ -46,4 +47,4 @@ El archivo descargado de Correos de México se conserva localmente como `databas
 docker compose exec backend python manage.py import_sepomex --file /app/database/seeds/CPdescarga.txt
 ```
 
-La ejecución validada leyó 159,311 filas y dejó 159,307 registros únicos. Al repetirla, el total se mantuvo. Para `01000`, MySQL devuelve `San Ángel`, `Álvaro Obregón`, `Ciudad de México`, confirmando la conversión correcta de acentos.
+La ejecución validada leyó 159,311 filas y dejó 159,307 registros únicos. Al repetirla, el total se mantuvo y el comando informó `nuevos registros: 0`. Para `01000`, MySQL devuelve `San Ángel`, `Álvaro Obregón`, `Ciudad de México`, confirmando la conversión correcta de acentos.
