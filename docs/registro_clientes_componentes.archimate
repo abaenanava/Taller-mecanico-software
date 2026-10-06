@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<archimate:model xmlns:archimate="http://www.archimatetool.com/archimate" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Registro de clientes - Motora" id="id-model-client-registration">
+  <folder name="Business" id="id-business-folder">
+    <element xsi:type="archimate:BusinessActor" name="Administrador / Recepcionista" id="id-authorized-user"/>
+    <element xsi:type="archimate:BusinessProcess" name="Registro de clientes" id="id-registration-process"/>
+  </folder>
+  <folder name="Application" id="id-application-folder">
+    <element xsi:type="archimate:ApplicationComponent" name="Vue: formulario Clientes" id="id-vue-client-form"/>
+    <element xsi:type="archimate:ApplicationComponent" name="Django: Client Controller" id="id-django-controller"/>
+    <element xsi:type="archimate:ApplicationComponent" name="ClientFacade" id="id-client-facade"/>
+    <element xsi:type="archimate:ApplicationComponent" name="ClientRepository" id="id-client-repository"/>
+    <element xsi:type="archimate:DataObject" name="Cliente y fotografía" id="id-client-data"/>
+  </folder>
+  <folder name="Technology" id="id-technology-folder">
+    <element xsi:type="archimate:Node" name="MySQL 8.4" id="id-mysql"/>
+    <element xsi:type="archimate:Node" name="Volumen media_data" id="id-media-volume"/>
+  </folder>
+  <folder name="Relations" id="id-relations-folder">
+    <element xsi:type="archimate:FlowRelationship" id="id-flow-user-ui" source="id-authorized-user" target="id-vue-client-form"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-flow-ui-controller" source="id-vue-client-form" target="id-django-controller"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-flow-controller-facade" source="id-django-controller" target="id-client-facade"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-flow-facade-repository" source="id-client-facade" target="id-client-repository"/>
+    <element xsi:type="archimate:AccessRelationship" id="id-access-client-data" source="id-client-repository" target="id-client-data" accessType="1"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-flow-data-mysql" source="id-client-data" target="id-mysql"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-flow-data-media" source="id-client-data" target="id-media-volume"/>
+  </folder>
+  <folder name="Views" id="id-views-folder">
+    <element xsi:type="archimate:ArchimateDiagramModel" name="Componentes: registro de clientes" id="id-components-view">
+      <child xsi:type="archimate:DiagramModelArchimateObject" id="id-node-user" archimateElement="id-authorized-user"><bounds x="20" y="180" width="150" height="55"/></child>
+      <child xsi:type="archimate:DiagramModelArchimateObject" id="id-node-ui" archimateElement="id-vue-client-form"><bounds x="220" y="180" width="160" height="55"/></child>
+      <child xsi:type="archimate:DiagramModelArchimateObject" id="id-node-controller" archimateElement="id-django-controller"><bounds x="430" y="180" width="160" height="55"/></child>
+      <child xsi:type="archimate:DiagramModelArchimateObject" id="id-node-facade" archimateElement="id-client-facade"><bounds x="640" y="180" width="145" height="55"/></child>
+      <child xsi:type="archimate:DiagramModelArchimateObject" id="id-node-repository" archimateElement="id-client-repository"><bounds x="830" y="180" width="155" height="55"/></child>
+      <child xsi:type="archimate:DiagramModelArchimateObject" id="id-node-data" archimateElement="id-client-data"><bounds x="1020" y="110" width="150" height="55"/></child>
+      <child xsi:type="archimate:DiagramModelArchimateObject" id="id-node-mysql" archimateElement="id-mysql"><bounds x="1020" y="215" width="150" height="55"/></child>
+      <child xsi:type="archimate:DiagramModelArchimateObject" id="id-node-media" archimateElement="id-media-volume"><bounds x="1020" y="320" width="150" height="55"/></child>
+      <sourceConnection xsi:type="archimate:DiagramModelArchimateConnection" id="id-conn-user-ui" source="id-node-user" target="id-node-ui" archimateRelationship="id-flow-user-ui"/>
+      <sourceConnection xsi:type="archimate:DiagramModelArchimateConnection" id="id-conn-ui-controller" source="id-node-ui" target="id-node-controller" archimateRelationship="id-flow-ui-controller"/>
+      <sourceConnection xsi:type="archimate:DiagramModelArchimateConnection" id="id-conn-controller-facade" source="id-node-controller" target="id-node-facade" archimateRelationship="id-flow-controller-facade"/>
+      <sourceConnection xsi:type="archimate:DiagramModelArchimateConnection" id="id-conn-facade-repository" source="id-node-facade" target="id-node-repository" archimateRelationship="id-flow-facade-repository"/>
+      <sourceConnection xsi:type="archimate:DiagramModelArchimateConnection" id="id-conn-repository-data" source="id-node-repository" target="id-node-data" archimateRelationship="id-access-client-data"/>
+      <sourceConnection xsi:type="archimate:DiagramModelArchimateConnection" id="id-conn-data-mysql" source="id-node-data" target="id-node-mysql" archimateRelationship="id-flow-data-mysql"/>
+      <sourceConnection xsi:type="archimate:DiagramModelArchimateConnection" id="id-conn-data-media" source="id-node-data" target="id-node-media" archimateRelationship="id-flow-data-media"/>
+    </element>
+  </folder>
+</archimate:model>

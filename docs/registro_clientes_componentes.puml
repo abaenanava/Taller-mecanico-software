@@ -1,0 +1,17 @@
+@startuml
+left to right direction
+skinparam componentStyle rectangle
+actor "Administrador /\nRecepcionista" as User
+component "Vue\nFormulario Clientes" as Vue
+component "Django\nClient Controller" as Controller
+component "ClientFacade\nvalidación + deduplicación" as Facade
+component "ClientRepository\nacceso REST/ORM" as Repository
+database "MySQL 8.4\nCliente" as Mysql
+storage "media_data\nfotografías" as Media
+User --> Vue : formulario multipart
+Vue --> Controller : POST /api/clients/register/
+Controller --> Facade : datos + fotografía
+Facade --> Repository : guardar / consultar
+Repository --> Mysql : registros Cliente
+Facade --> Media : archivo png/jpg
+@enduml
