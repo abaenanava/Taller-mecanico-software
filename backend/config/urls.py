@@ -16,6 +16,7 @@ urlpatterns = [
     path('api/clients/register/', views.create_client),
     path('api/clients/<int:client_id>/', views.client_detail),
     path('api/clients/<int:client_id>/suspend/', views.suspend_client),
+    path('api/clients/<int:client_id>/activate/', views.activate_client),
     path('api/codigos-postales/<str:cp>/', views.postal_code),
     path('api/talleres/', views.workshops),
 ]

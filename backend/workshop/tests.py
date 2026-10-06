@@ -147,5 +147,10 @@ class ClientRegistrationApiTests(TestCase):
         self.assertEqual(listed.json()['total'], 12)
         client_id = listed.json()['clients'][0]['id']
         self.assertEqual(self.client.post(f'/api/clients/{client_id}/suspend/').status_code, 200)
+        self.assertEqual(Client.objects.get(pk=client_id).status, 'SUSPENDIDO')
+        self.assertEqual(self.client.post(f'/api/clients/{client_id}/activate/').status_code, 200)
+        self.assertEqual(Client.objects.get(pk=client_id).status, 'ACTIVO')
+        self.assertEqual(self.client.post(f'/api/clients/{client_id}/suspend/').status_code, 200)
         self.client.force_login(self.receptionist)
         self.assertEqual(self.client.post(f'/api/clients/{client_id}/suspend/').status_code, 403)
+        self.assertEqual(self.client.post(f'/api/clients/{client_id}/activate/').status_code, 403)

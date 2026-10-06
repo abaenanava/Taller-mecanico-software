@@ -58,10 +58,19 @@ class ClientFacade:
         return self.repository.list(**filters)
 
     def suspend(self, client_id):
+        """Cambia un cliente a suspendido sin eliminar su historial."""
         client = self.get_client(client_id)
         if not client:
             return None
         client.status = 'SUSPENDIDO'
+        return self.repository.update(client, status=client.status)
+
+    def activate(self, client_id):
+        """Restaura un cliente suspendido para que vuelva a estar activo."""
+        client = self.get_client(client_id)
+        if not client:
+            return None
+        client.status = 'ACTIVO'
         return self.repository.update(client, status=client.status)
 
     def _find_duplicate(self, data, exclude_id=None):

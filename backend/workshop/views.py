@@ -165,6 +165,14 @@ def suspend_client(request, client_id):
     return JsonResponse({'detail': 'Cliente suspendido exitosamente', 'client': client_data(client, request)})
 
 @require_POST
+@roles_required(User.Role.ADMIN)
+def activate_client(request, client_id):
+    """Reactiva al cliente solicitado; sólo Administración puede cambiar su estatus."""
+    client = ClientFacade().activate(client_id)
+    if not client: return JsonResponse({'detail': 'Cliente no encontrado.'}, status=404)
+    return JsonResponse({'detail': 'Cliente activado exitosamente', 'client': client_data(client, request)})
+
+@require_POST
 def register(request):
     try:
         payload = json.loads(request.body or '{}')

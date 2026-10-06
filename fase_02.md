@@ -34,7 +34,7 @@ La fachada decide si la operación es válida y única; el repositorio persiste.
 | Talleres por rol | Completo | GET para Administración/Recepción, POST sólo para Administración tanto en Vue como en Django. |
 | Relación cliente–taller | Completo | `Client.workshop` usa FK `PROTECT`; la migración crea un taller predeterminado y conserva los clientes previos. |
 | Filtros y páginas | Completo | `ClientRepository.list` filtra por taller/estatus, ordena de forma segura y devuelve máximo 10 registros; la API devuelve `total`, `page` y `pages`. |
-| Suspensión | Completo | `ClientFacade.suspend` cambia a `SUSPENDIDO`; API y botón exigen `ADMIN`. |
+| Suspensión y reactivación | Completo | `ClientFacade.suspend` cambia a `SUSPENDIDO` y `ClientFacade.activate` restaura `ACTIVO`; ambas rutas y botones exigen `ADMIN`. |
 | Migración de alineación | Completo | `0006_align_client_address_fields` sincroniza longitudes de dirección, CP y estatus declarados por `Client` con MySQL. |
 | Pruebas | Completo | `ClientRegistrationApiTests` cubre taller duplicado/RFC inválido, rol de Recepción, 12 clientes, páginas, edición, duplicados, suspensión, consulta CP, coincidencia de dirección y CP manual no verificado. |
 | Pendiente | No requerido | Edición y detalle de taller no fueron solicitados para esta continuación. |
