@@ -14,3 +14,7 @@
 | Esquema de cliente | Completo | Migraciones `0005` y `0006` mantienen la FK del taller, estatus y longitudes de dirección alineadas con el modelo Django. |
 | Verificación final local | Completo | 8 pruebas Django y compilación Vite superadas; una segunda importación añadió 0 filas. |
 | Pendiente | Operativo | Carga inicial de credenciales autorizadas requiere variables `SEED_*` y el comando existente. |
+
+## Documentación técnica actualizada
+
+`fase_02.md` conserva la fase original y documenta la continuación con tablas de responsabilidades para modelos, migraciones, comando SEPOMEX, Repository, Facade, validadores, vistas REST, rutas y funciones Vue. También enumera de manera explícita los pendientes que no forman parte de la Fase 02.
