@@ -2,7 +2,7 @@
 
 ## Alcance actual de la fase 02
 
-El sistema permite a `ADMIN` y `RECEPCION` iniciar sesión, registrar, consultar y modificar clientes. Cada cliente pertenece a un taller obligatorio. El Administrador además crea talleres y puede suspender o activar clientes; la Recepcionista no recibe esas acciones en la interfaz y el backend también las bloquea.
+El sistema permite a `ADMIN` y `RECEPCION` iniciar sesión, registrar, consultar y modificar clientes y talleres. Cada cliente pertenece a un taller obligatorio. Sólo Administración puede suspender o activar clientes; la Recepcionista no recibe esas acciones en la interfaz y el backend también las bloquea.
 
 Las direcciones de talleres y clientes consultan el catálogo SEPOMEX importado. Cuando el CP existe, municipio, estado y colonias se obtienen del catálogo; cuando no existe, la captura manual queda marcada como no verificada.
 
@@ -33,7 +33,7 @@ Las direcciones de talleres y clientes consultan el catálogo SEPOMEX importado.
 | `/api/clients/<id>/` | `GET`, `PUT` | ADMIN, RECEPCION | Consulta o modifica un cliente. |
 | `/api/clients/<id>/suspend/` | `POST` | ADMIN | Cambia el estatus a suspendido. |
 | `/api/clients/<id>/activate/` | `POST` | ADMIN | Reactiva un cliente suspendido. |
-| `/api/talleres/` | `GET`, `POST` | GET: roles autorizados; POST: ADMIN | Consulta o registra talleres. |
+| `/api/talleres/` | `GET`, `POST` | ADMIN, RECEPCION | Consulta o registra talleres. |
 | `/api/codigos-postales/<cp>/` | `GET` | ADMIN, RECEPCION | Obtiene estado, municipio y colonias de un CP. |
 
 ## Diagrama de arquitectura actualizado

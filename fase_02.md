@@ -31,7 +31,7 @@ La fachada decide si la operación es válida y única; el repositorio persiste.
 | Validación de dirección | Completo | `ClientFacade` y `WorkshopFacade` usan el catálogo cuando existe CP; una combinación distinta se rechaza por campo. CP ausente permite captura manual no verificada. |
 | Tabla `talleres` | Completo | `Workshop` guarda nombre, dirección, razón social, RFC único, contacto y fotografía; nombre+dirección tiene restricción única. |
 | RFC y fotografía | Completo | `validate_workshop` exige RFC mexicano de 12/13 posiciones, teléfono, correo y fotografía PNG/JPG firmada de máximo 15 MB. |
-| Talleres por rol | Completo | GET para Administración/Recepción, POST sólo para Administración tanto en Vue como en Django. |
+| Talleres por rol | Completo | Administración y Recepción pueden listar y registrar talleres tanto en Vue como en Django; sólo Administración conserva el cambio de estatus de clientes. |
 | Relación cliente–taller | Completo | `Client.workshop` usa FK `PROTECT`; la migración crea un taller predeterminado y conserva los clientes previos. |
 | Filtros y páginas | Completo | `ClientRepository.list` filtra por taller/estatus, ordena de forma segura y devuelve máximo 10 registros; la API devuelve `total`, `page` y `pages`. |
 | Suspensión y reactivación | Completo | `ClientFacade.suspend` cambia a `SUSPENDIDO` y `ClientFacade.activate` restaura `ACTIVO`; ambas rutas y botones exigen `ADMIN`. |
@@ -88,7 +88,7 @@ La ejecución validada leyó 159,311 filas y dejó 159,307 registros únicos. Al
 | `backend/workshop/validators.py` | `ClientRegistrationValidator.validate_workshop` | Valida los datos de taller, RFC mexicano de 12 o 13 caracteres, correo, teléfono, foto y CP. |
 | `backend/workshop/views.py` | `clients`, `create_client`, `client_detail` | Exponen listado, alta y edición REST. Traducen `ClientInputError` a HTTP 422 y duplicados a HTTP 409 con el registro encontrado. |
 | `backend/workshop/views.py` | `postal_code` | Atiende `GET /api/codigos-postales/<cp>/` para autocompletar estado, municipio y colonias. |
-| `backend/workshop/views.py` | `workshops` | Permite listar talleres a Administración/Recepción y crear talleres únicamente a Administración. |
+| `backend/workshop/views.py` | `workshops` | Permite listar y registrar talleres a Administración y Recepción; el decorador de roles protege ambos métodos HTTP. |
 | `backend/workshop/views.py` | `suspend_client` y `activate_client` | Atienden las rutas POST de cambio de estatus; ambos usan `roles_required(User.Role.ADMIN)`, por lo que Recepción recibe HTTP 403. |
 | `backend/config/urls.py` | Rutas de clientes, talleres, CP y estatus | Asocia las URLs REST con sus vistas: clientes, talleres, catálogo postal, suspensión y reactivación. |
 
@@ -100,7 +100,8 @@ La ejecución validada leyó 159,311 filas y dejó 159,307 registros únicos. Al
 | `frontend/src/main.js` | `initials`, `canManageClients`, `isAdmin`, `isEditingClient`, `noticeClass` | Calculan iniciales, permisos visibles, modo de edición y el estilo de mensajes sin repetir lógica en la plantilla. |
 | `frontend/src/main.js` | `csrfToken`, `signIn`, `register`, `signOut` | Obtienen el token CSRF y gestionan el ciclo de sesión con las rutas de autenticación existentes. |
 | `frontend/src/main.js` | `toggleMenu`, `expandMenu`, `collapseMenu`, `goHome` | Controlan el menú lateral colapsable, la apertura por hover y el regreso al panel principal. |
-| `frontend/src/main.js` | `loadWorkshops`, `openWorkshopRegister`, `saveWorkshop` | Cargan los talleres disponibles, restringen visualmente su alta a Administración y envían el formulario multipart al backend. |
+| `frontend/src/main.js` | `loadWorkshops`, `openWorkshopRegister`, `saveWorkshop` | Cargan los talleres disponibles, permiten su alta a Administración y Recepción y envían el formulario multipart al backend. |
+| `frontend/src/main.js` | `openWorkshops`, `openWorkshopDetail`, `loadWorkshopClients` | Muestran tarjetas de talleres, abren su ficha y consultan por REST los clientes filtrados por `workshop_id`, con orden y paginación independientes. |
 | `frontend/src/main.js` | `openRegister`, `openClients`, `loadClients`, `openClientDetail` | Preparan el formulario de alta, solicitan la página filtrada de clientes y recuperan el detalle completo de una tarjeta. |
 | `frontend/src/main.js` | `lookupPostal` | Llama al endpoint de CP al capturar cinco dígitos; bloquea estado/municipio para CP verificado o habilita captura manual cuando no existe. |
 | `frontend/src/main.js` | `editClient`, `selectPhoto`, `saveClient` | Prepara edición, toma una foto opcional/nueva, construye `FormData` y muestra errores 422, duplicados 409 o confirmaciones de guardado. |

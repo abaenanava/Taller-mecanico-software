@@ -148,10 +148,9 @@ def workshop_data(workshop, request):
 @require_http_methods(['GET', 'POST'])
 @roles_required(User.Role.ADMIN, User.Role.RECEPTION)
 def workshops(request):
+    """Lista talleres o registra uno; Administración y Recepción pueden gestionarlos."""
     facade = WorkshopFacade()
     if request.method == 'GET': return JsonResponse({'workshops': [workshop_data(item, request) for item in facade.list()]})
-    if not (request.user.is_superuser or request.user.role == User.Role.ADMIN):
-        return JsonResponse({'detail': 'Sólo Administración puede registrar talleres.'}, status=403)
     try: result = facade.register(request.POST, request.FILES.get('photo'))
     except ClientInputError as error: return JsonResponse({'detail': 'Revisa los campos marcados.', 'fields': error.fields}, status=422)
     if not result.created: return JsonResponse({'detail': 'Ya existe un taller con ese RFC o dirección.', 'workshop': workshop_data(result.client, request)}, status=409)

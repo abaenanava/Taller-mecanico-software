@@ -120,7 +120,7 @@ class ClientRegistrationApiTests(TestCase):
         ))
         self.assertEqual(manual.status_code, 201, manual.content.decode())
 
-    def test_admin_creates_workshop_and_reception_cannot(self):
+    def test_administrator_and_receptionist_can_create_workshops(self):
         workshop = {
             'name': 'Taller Norte', 'street': 'Avenida Uno', 'neighborhood': 'Centro', 'municipality': 'Monterrey',
             'state': 'Nuevo León', 'postal_code': '64000', 'business_name': 'Taller Norte SA',
@@ -134,8 +134,9 @@ class ClientRegistrationApiTests(TestCase):
         workshop['rfc'] = 'RFC-MALO'
         self.assertEqual(self.client.post('/api/talleres/', workshop).status_code, 422)
         self.client.force_login(self.receptionist)
-        workshop['rfc'] = 'DEF010101AAA'
-        self.assertEqual(self.client.post('/api/talleres/', workshop).status_code, 403)
+        workshop.update(name='Taller Recepción', street='Avenida Dos', rfc='DEF010101AAA')
+        workshop['photo'] = SimpleUploadedFile('taller-recepcion.png', PNG, content_type='image/png')
+        self.assertEqual(self.client.post('/api/talleres/', workshop).status_code, 201)
 
     def test_only_administrator_suspends_client_and_list_paginates(self):
         self.client.force_login(self.administrator)

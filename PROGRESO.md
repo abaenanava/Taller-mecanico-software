@@ -5,7 +5,7 @@
 | Área | Estado | Evidencia |
 | --- | --- | --- |
 | Clientes con roles | Completo | `roles_required` limita clientes a `ADMIN` y `RECEPCION`. |
-| Talleres | Completo | Modelo `Workshop`, API `/api/talleres/` y formulario sólo visible para Administración. |
+| Talleres | Completo | Modelo `Workshop`, API `/api/talleres/`, registro para Administración y Recepción, y consulta visual con clientes asociados. |
 | Cliente por taller | Completo | `Client.workshop` es FK obligatoria; la migración asigna registros anteriores al taller predeterminado. |
 | Catálogo SEPOMEX | Completo | `PostalCode`, importador idempotente y ruta `GET /api/codigos-postales/<cp>/`. |
 | Validación postal | Completo | Si el CP existe, colonia/municipio/estado deben coincidir; si no existe, la captura queda no verificada. |
