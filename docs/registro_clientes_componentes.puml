@@ -1,17 +1,47 @@
 @startuml
-left to right direction
+title Motora — Arquitectura real de la Fase 02
 skinparam componentStyle rectangle
-actor "Administrador /\nRecepcionista" as User
-component "Vue\nFormulario Clientes" as Vue
-component "Django\nClient Controller" as Controller
-component "ClientFacade\nvalidación + deduplicación" as Facade
-component "ClientRepository\nacceso REST/ORM" as Repository
-database "MySQL 8.4\nCliente" as Mysql
-storage "media_data\nfotografías" as Media
-User --> Vue : formulario multipart
-Vue --> Controller : POST /api/clients/register/
-Controller --> Facade : datos + fotografía
-Facade --> Repository : guardar / consultar
-Repository --> Mysql : registros Cliente
-Facade --> Media : archivo png/jpg
+skinparam shadowing false
+
+actor "Administrador" as admin
+actor "Recepcionista" as reception
+
+rectangle "NEGOCIO" {
+  usecase "Gestionar clientes\ny talleres" as process
+}
+
+rectangle "APLICACIÓN" {
+  component "Interfaz Vue\nfrontend/src/main.js" as vue
+  component "Autenticación, sesión y CSRF\nviews.py" as auth
+  component "API Django\nurls.py + views.py" as api
+  component "roles_required\nauth.py" as roles
+  component "ClientFacade" as clientFacade
+  component "WorkshopFacade" as workshopFacade
+  component "PostalCodeFacade" as postalFacade
+  component "Repositories y validadores" as dataAccess
+  database "Cliente · Taller · CodigoPostal" as data
+}
+
+rectangle "TECNOLOGÍA" {
+  node "Contenedor Django" as django
+  database "MySQL\nclientes · talleres · codigos_postales" as mysql
+  artifact "media_data\nfotografías" as media
+}
+
+admin --> process : administra
+reception ..> process : registra y consulta
+process --> vue : captura y consulta
+auth -[#198754]-> vue : sesión y CSRF
+vue -[#1677c8]-> api : REST + foto
+roles -[#198754]-> api : autoriza
+api -[#1677c8]-> clientFacade : clientes
+api -[#1677c8]-> workshopFacade : talleres
+api -[#1677c8]-> postalFacade : código postal
+clientFacade -[#198754]-> dataAccess : valida y guarda
+workshopFacade -[#198754]-> dataAccess : valida y guarda
+postalFacade -[#198754]-> dataAccess : consulta catálogo
+dataAccess -[#e07918,dashed]-> data : lee / escribe
+data -[#e07918,dashed]-> mysql : persistencia
+dataAccess -[#e07918,dashed]-> media : fotografías
+django ..> api : ejecuta
 @enduml

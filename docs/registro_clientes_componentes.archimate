@@ -1,46 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<archimate:model xmlns:archimate="http://www.archimatetool.com/archimate" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Registro de clientes - Motora" id="id-model-client-registration">
-  <folder name="Business" id="id-business-folder">
-    <element xsi:type="archimate:BusinessActor" name="Administrador / Recepcionista" id="id-authorized-user"/>
-    <element xsi:type="archimate:BusinessProcess" name="Registro de clientes" id="id-registration-process"/>
+<archimate:model xmlns:archimate="http://www.archimatetool.com/archimate" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Motora - Fase 02" id="motora-fase-02">
+  <folder name="Estrategia" id="strategy-folder" type="strategy"/>
+  <folder name="Negocio" id="business-folder" type="business">
+    <element xsi:type="archimate:BusinessActor" name="Administrador" id="actor-admin"/>
+    <element xsi:type="archimate:BusinessActor" name="Recepcionista" id="actor-reception"/>
+    <element xsi:type="archimate:BusinessProcess" name="Gestionar clientes y talleres" id="process-management"/>
   </folder>
-  <folder name="Application" id="id-application-folder">
-    <element xsi:type="archimate:ApplicationComponent" name="Vue: formulario Clientes" id="id-vue-client-form"/>
-    <element xsi:type="archimate:ApplicationComponent" name="Django: Client Controller" id="id-django-controller"/>
-    <element xsi:type="archimate:ApplicationComponent" name="ClientFacade" id="id-client-facade"/>
-    <element xsi:type="archimate:ApplicationComponent" name="ClientRepository" id="id-client-repository"/>
-    <element xsi:type="archimate:DataObject" name="Cliente y fotografía" id="id-client-data"/>
+  <folder name="Aplicación" id="application-folder" type="application">
+    <element xsi:type="archimate:ApplicationComponent" name="Interfaz Vue (main.js)" id="app-vue"/>
+    <element xsi:type="archimate:ApplicationService" name="Autenticación, sesión y CSRF" id="app-auth"/>
+    <element xsi:type="archimate:ApplicationFunction" name="Autorización roles_required" id="app-roles"/>
+    <element xsi:type="archimate:ApplicationComponent" name="API Django (views.py)" id="app-api"/>
+    <element xsi:type="archimate:ApplicationComponent" name="ClientFacade" id="app-client-facade"/>
+    <element xsi:type="archimate:ApplicationComponent" name="WorkshopFacade" id="app-workshop-facade"/>
+    <element xsi:type="archimate:ApplicationComponent" name="PostalCodeFacade" id="app-postal-facade"/>
+    <element xsi:type="archimate:ApplicationComponent" name="Repositories y validadores" id="app-data-access"/>
+    <element xsi:type="archimate:DataObject" name="Cliente, Taller y Código postal" id="app-data"/>
   </folder>
-  <folder name="Technology" id="id-technology-folder">
-    <element xsi:type="archimate:Node" name="MySQL 8.4" id="id-mysql"/>
-    <element xsi:type="archimate:Node" name="Volumen media_data" id="id-media-volume"/>
+  <folder name="Tecnología" id="technology-folder" type="technology">
+    <element xsi:type="archimate:Node" name="Contenedor Django" id="tech-django"/>
+    <element xsi:type="archimate:Node" name="MySQL" id="tech-mysql"/>
+    <element xsi:type="archimate:Artifact" name="Archivos de fotografía (media_data)" id="tech-media"/>
   </folder>
-  <folder name="Relations" id="id-relations-folder">
-    <element xsi:type="archimate:FlowRelationship" id="id-flow-user-ui" source="id-authorized-user" target="id-vue-client-form"/>
-    <element xsi:type="archimate:FlowRelationship" id="id-flow-ui-controller" source="id-vue-client-form" target="id-django-controller"/>
-    <element xsi:type="archimate:FlowRelationship" id="id-flow-controller-facade" source="id-django-controller" target="id-client-facade"/>
-    <element xsi:type="archimate:FlowRelationship" id="id-flow-facade-repository" source="id-client-facade" target="id-client-repository"/>
-    <element xsi:type="archimate:AccessRelationship" id="id-access-client-data" source="id-client-repository" target="id-client-data" accessType="1"/>
-    <element xsi:type="archimate:FlowRelationship" id="id-flow-data-mysql" source="id-client-data" target="id-mysql"/>
-    <element xsi:type="archimate:FlowRelationship" id="id-flow-data-media" source="id-client-data" target="id-media-volume"/>
+  <folder name="Relaciones" id="relations-folder" type="relations">
+    <element xsi:type="archimate:TriggeringRelationship" source="actor-admin" target="process-management" name="administra" id="rel-admin-process"/>
+    <element xsi:type="archimate:AssignmentRelationship" source="actor-reception" target="process-management" name="registra y consulta" id="rel-reception-process"/>
+    <element xsi:type="archimate:FlowRelationship" source="process-management" target="app-vue" name="captura y consulta" id="rel-process-vue"/>
+    <element xsi:type="archimate:ServingRelationship" source="app-auth" target="app-vue" name="sesión y CSRF" id="rel-auth-vue"/>
+    <element xsi:type="archimate:FlowRelationship" source="app-vue" target="app-api" name="solicitudes REST" id="rel-vue-api"/>
+    <element xsi:type="archimate:ServingRelationship" source="app-roles" target="app-api" name="autoriza roles" id="rel-roles-api"/>
+    <element xsi:type="archimate:FlowRelationship" source="app-api" target="app-client-facade" name="clientes: crear, editar, listar, estatus" id="rel-api-client"/>
+    <element xsi:type="archimate:FlowRelationship" source="app-api" target="app-workshop-facade" name="talleres" id="rel-api-workshop"/>
+    <element xsi:type="archimate:FlowRelationship" source="app-api" target="app-postal-facade" name="consulta CP" id="rel-api-postal"/>
+    <element xsi:type="archimate:ServingRelationship" source="app-data-access" target="app-client-facade" name="persistencia y validación" id="rel-data-client"/>
+    <element xsi:type="archimate:ServingRelationship" source="app-data-access" target="app-workshop-facade" name="persistencia y validación" id="rel-data-workshop"/>
+    <element xsi:type="archimate:ServingRelationship" source="app-data-access" target="app-postal-facade" name="consulta catálogo" id="rel-data-postal"/>
+    <element xsi:type="archimate:AccessRelationship" source="app-data-access" target="app-data" name="lee y escribe" accessType="1" id="rel-access-data"/>
+    <element xsi:type="archimate:AccessRelationship" source="app-data" target="tech-mysql" name="clientes, talleres y CP" accessType="1" id="rel-data-mysql"/>
+    <element xsi:type="archimate:AccessRelationship" source="app-data-access" target="tech-media" name="fotografías" accessType="1" id="rel-data-media"/>
+    <element xsi:type="archimate:RealizationRelationship" source="tech-django" target="app-api" name="ejecuta" id="rel-django-api"/>
   </folder>
-  <folder name="Views" id="id-views-folder">
-    <element xsi:type="archimate:ArchimateDiagramModel" name="Componentes: registro de clientes" id="id-components-view">
-      <child xsi:type="archimate:DiagramModelArchimateObject" id="id-node-user" archimateElement="id-authorized-user"><bounds x="20" y="180" width="150" height="55"/></child>
-      <child xsi:type="archimate:DiagramModelArchimateObject" id="id-node-ui" archimateElement="id-vue-client-form"><bounds x="220" y="180" width="160" height="55"/></child>
-      <child xsi:type="archimate:DiagramModelArchimateObject" id="id-node-controller" archimateElement="id-django-controller"><bounds x="430" y="180" width="160" height="55"/></child>
-      <child xsi:type="archimate:DiagramModelArchimateObject" id="id-node-facade" archimateElement="id-client-facade"><bounds x="640" y="180" width="145" height="55"/></child>
-      <child xsi:type="archimate:DiagramModelArchimateObject" id="id-node-repository" archimateElement="id-client-repository"><bounds x="830" y="180" width="155" height="55"/></child>
-      <child xsi:type="archimate:DiagramModelArchimateObject" id="id-node-data" archimateElement="id-client-data"><bounds x="1020" y="110" width="150" height="55"/></child>
-      <child xsi:type="archimate:DiagramModelArchimateObject" id="id-node-mysql" archimateElement="id-mysql"><bounds x="1020" y="215" width="150" height="55"/></child>
-      <child xsi:type="archimate:DiagramModelArchimateObject" id="id-node-media" archimateElement="id-media-volume"><bounds x="1020" y="320" width="150" height="55"/></child>
-      <sourceConnection xsi:type="archimate:DiagramModelArchimateConnection" id="id-conn-user-ui" source="id-node-user" target="id-node-ui" archimateRelationship="id-flow-user-ui"/>
-      <sourceConnection xsi:type="archimate:DiagramModelArchimateConnection" id="id-conn-ui-controller" source="id-node-ui" target="id-node-controller" archimateRelationship="id-flow-ui-controller"/>
-      <sourceConnection xsi:type="archimate:DiagramModelArchimateConnection" id="id-conn-controller-facade" source="id-node-controller" target="id-node-facade" archimateRelationship="id-flow-controller-facade"/>
-      <sourceConnection xsi:type="archimate:DiagramModelArchimateConnection" id="id-conn-facade-repository" source="id-node-facade" target="id-node-repository" archimateRelationship="id-flow-facade-repository"/>
-      <sourceConnection xsi:type="archimate:DiagramModelArchimateConnection" id="id-conn-repository-data" source="id-node-repository" target="id-node-data" archimateRelationship="id-access-client-data"/>
-      <sourceConnection xsi:type="archimate:DiagramModelArchimateConnection" id="id-conn-data-mysql" source="id-node-data" target="id-node-mysql" archimateRelationship="id-flow-data-mysql"/>
-      <sourceConnection xsi:type="archimate:DiagramModelArchimateConnection" id="id-conn-data-media" source="id-node-data" target="id-node-media" archimateRelationship="id-flow-data-media"/>
+  <folder name="Vistas" id="views-folder" type="diagrams">
+    <element xsi:type="archimate:ArchimateDiagramModel" name="Arquitectura Fase 02" id="view-fase-02">
+      <child xsi:type="archimate:DiagramModelReference" model="actor-admin" id="view-admin"><bounds x="40" y="40" width="150" height="55"/></child>
+      <child xsi:type="archimate:DiagramModelReference" model="actor-reception" id="view-reception"><bounds x="220" y="40" width="150" height="55"/></child>
+      <child xsi:type="archimate:DiagramModelReference" model="process-management" id="view-process"><bounds x="130" y="120" width="180" height="55"/></child>
+      <child xsi:type="archimate:DiagramModelReference" model="app-vue" id="view-vue"><bounds x="30" y="240" width="160" height="55"/></child>
+      <child xsi:type="archimate:DiagramModelReference" model="app-auth" id="view-auth"><bounds x="220" y="240" width="160" height="55"/></child>
+      <child xsi:type="archimate:DiagramModelReference" model="app-api" id="view-api"><bounds x="410" y="240" width="160" height="55"/></child>
+      <child xsi:type="archimate:DiagramModelReference" model="app-roles" id="view-roles"><bounds x="600" y="240" width="160" height="55"/></child>
+      <child xsi:type="archimate:DiagramModelReference" model="app-client-facade" id="view-client"><bounds x="30" y="330" width="160" height="55"/></child>
+      <child xsi:type="archimate:DiagramModelReference" model="app-workshop-facade" id="view-workshop"><bounds x="220" y="330" width="160" height="55"/></child>
+      <child xsi:type="archimate:DiagramModelReference" model="app-postal-facade" id="view-postal"><bounds x="410" y="330" width="160" height="55"/></child>
+      <child xsi:type="archimate:DiagramModelReference" model="app-data-access" id="view-data-access"><bounds x="600" y="330" width="160" height="55"/></child>
+      <child xsi:type="archimate:DiagramModelReference" model="app-data" id="view-data"><bounds x="320" y="420" width="180" height="55"/></child>
+      <child xsi:type="archimate:DiagramModelReference" model="tech-django" id="view-django"><bounds x="30" y="520" width="160" height="55"/></child>
+      <child xsi:type="archimate:DiagramModelReference" model="tech-mysql" id="view-mysql"><bounds x="320" y="520" width="160" height="55"/></child>
+      <child xsi:type="archimate:DiagramModelReference" model="tech-media" id="view-media"><bounds x="600" y="520" width="160" height="55"/></child>
     </element>
   </folder>
 </archimate:model>

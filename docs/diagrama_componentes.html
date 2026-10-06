@@ -3,103 +3,151 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Motora · Arquitectura ArchiMate interactiva</title>
+  <title>Motora · Arquitectura Fase 02</title>
   <style>
-    :root{--ink:#152535;--muted:#647587;--paper:#f4f7fa;--card:#fff;--line:#cbd5df;--business:#f5df82;--application:#afd6f4;--technology:#b9dfbd;--flow:#1976d2;--service:#25965a;--access:#ed8b22;--trigger:#d34949;--realize:#865ac7;--compose:#708090}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.45 Inter,system-ui,-apple-system,sans-serif}button,input{font:inherit}button{cursor:pointer}.page{max-width:1450px;margin:auto;padding:28px}.head{display:flex;justify-content:space-between;gap:24px;align-items:start;margin-bottom:18px}.brand{display:flex;align-items:center;gap:10px;color:#087bdc;font-weight:800;letter-spacing:2px}.mark{display:grid;place-items:center;width:34px;height:34px;border-radius:8px;color:#fff;background:linear-gradient(135deg,#1689ec,#0867c2)}h1{margin:10px 0 6px;font-size:clamp(27px,4vw,42px);letter-spacing:-1.5px}.intro{max-width:740px;margin:0;color:var(--muted)}.hint{padding:10px 13px;border-radius:8px;color:#1b5984;background:#eaf5ff;font-size:12px}.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:20px 0}.control-group{display:flex;flex-wrap:wrap;gap:6px;padding:7px;border:1px solid #d7e0e8;border-radius:10px;background:var(--card)}.control-group span{align-self:center;margin:0 5px;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.6px}.filter,.play{border:1px solid #c8d5e1;border-radius:7px;padding:7px 10px;color:#29445d;background:#fff;font-size:12px;font-weight:700}.filter.active,.play{border-color:#087bdc;color:#fff;background:#087bdc}.filter:hover,.play:hover{filter:brightness(.96)}.check{display:flex;align-items:center;gap:5px;padding:3px 5px;color:#46596b;font-size:11px;white-space:nowrap}.check i{width:10px;height:10px;border-radius:50%;background:var(--relation);box-shadow:0 0 0 1px #0001}.check input{accent-color:var(--relation)}.workspace{position:relative;min-height:690px;overflow:hidden;border:1px solid #d8e1e8;border-radius:15px;background:#fff;box-shadow:0 12px 32px #17253512;touch-action:none}.diagram{width:100%;height:690px;display:block;user-select:none}.layer-title{font-size:13px;font-weight:800;letter-spacing:.8px;fill:#344b5b}.layer-subtitle{font-size:10px;fill:#647587}.layer-bg{opacity:.45}.node{cursor:pointer}.node rect{stroke:#9aabba;stroke-width:1.2;filter:drop-shadow(0 3px 4px #15253518);transition:.2s}.node:hover rect,.node.selected rect,.node.connected rect{stroke:#087bdc;stroke-width:3}.node-title{font-size:13px;font-weight:750;fill:#152535;pointer-events:none}.node-type{font-size:10px;fill:#50677b;pointer-events:none}.node-layer{font-size:9px;font-weight:700;letter-spacing:.7px;fill:#476070;pointer-events:none}.edge{fill:none;stroke:var(--color);stroke-width:2.2;marker-end:url(#arrow);cursor:pointer;transition:opacity .2s,stroke-width .2s,filter .2s}.edge.dashed{stroke-dasharray:7 5}.edge:hover,.edge.highlight{stroke-width:4;filter:drop-shadow(0 0 4px var(--color))}.edge-label{font-size:10px;fill:#496172;pointer-events:none}.dim{opacity:.16}.hidden{display:none!important}.tooltip{position:absolute;z-index:5;width:min(340px,calc(100% - 24px));padding:16px;border:1px solid #bdd1df;border-radius:11px;color:#203647;background:#fff;box-shadow:0 15px 32px #15253526;pointer-events:auto}.tooltip[hidden]{display:none}.tooltip h2{margin:0 26px 4px 0;font-size:16px}.tooltip .meta{margin:0 0 10px;color:#577086;font-size:11px;font-weight:800;letter-spacing:.6px}.tooltip p{margin:7px 0;color:#4c6170;font-size:12px}.io{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}.io div{padding:8px;border-radius:7px;background:#f3f7fa;font-size:11px}.io b{display:block;margin-bottom:3px;color:#2d526d}.close{position:absolute;right:10px;top:9px;border:0;border-radius:5px;padding:4px 8px;color:#536a7c;background:#edf3f7;font-weight:800}.legend{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 0}.legend span{display:flex;align-items:center;gap:6px;color:#506576;font-size:11px}.legend i{display:inline-block;width:20px;border-top:3px solid var(--relation)}.legend i.dash{border-top-style:dashed}@media(max-width:720px){.page{padding:18px}.head{display:block}.hint{margin-top:14px}.workspace,.diagram{min-height:560px;height:560px}.controls{align-items:stretch}.control-group{width:100%}.tooltip{left:12px!important;right:12px;bottom:12px!important;top:auto!important}.io{grid-template-columns:1fr}}
-    /* Estilo wireframe: las únicas marcas con color son las flechas de relación. */
-    :root{--ink:#111;--muted:#666;--paper:#fff;--card:#fff;--line:#333}.page{max-width:1450px}.brand{color:#111;letter-spacing:1px}.mark{border:2px solid #111;border-radius:1px;color:#111;background:#fff}.hint,.control-group,.workspace,.tooltip,.io div{border-color:#444!important;color:#111;background:#fff!important;box-shadow:none!important}.hint{border:2px solid #333}.workspace{border:2px solid #222;border-radius:1px}.layer-bg{fill:#fff!important;stroke:#333;stroke-width:2;stroke-dasharray:7 5;opacity:1}.layer-title,.node-title{fill:#111}.layer-subtitle,.node-type,.node-layer,.edge-label{fill:#666}.node rect{fill:#fff!important;stroke:#222;stroke-width:2;filter:none}.node:hover rect,.node.selected rect,.node.connected rect{stroke:#000;stroke-width:4}.node-type{font-family:Arial,sans-serif}.node-title{font-family:"Segoe Print","Comic Sans MS",Arial,sans-serif;font-size:14px}.node-layer{display:none}.filter,.play,.close{border:2px solid #333;border-radius:1px;color:#111;background:#fff}.filter.active,.play{color:#fff;background:#111;border-color:#111}.filter:hover,.play:hover{filter:none;background:#eee}.tooltip{border:2px solid #111;border-radius:1px}.tooltip h2,.tooltip p,.io b{color:#111}.io div{border:1px solid #777;border-radius:0}.legend{border-top:1px dashed #777;padding-top:14px}.edge-label{font-family:Arial,sans-serif;font-size:11px}.edge{filter:none!important}.edge:hover,.edge.highlight{stroke-width:4;filter:none!important}.dim{opacity:.14}.glossary{margin-top:24px;border-top:2px solid #222;padding-top:15px}.glossary h2{margin:0 0 10px;font-size:19px}.glossary table{width:100%;border-collapse:collapse;font-size:12px}.glossary th,.glossary td{padding:9px;text-align:left;vertical-align:top;border:1px solid #777}.glossary th{background:#eee}.glossary td:first-child{font-family:"Segoe Print","Comic Sans MS",Arial,sans-serif;font-weight:700}@media(max-width:720px){.glossary{overflow-x:auto}.glossary table{min-width:620px}}
+    :root { --ink:#16191d; --muted:#626a73; --paper:#fff; --line:#7e8790; --bg:#f3f5f7; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:var(--bg); font:14px Arial, sans-serif; }
+    header { padding:22px max(20px, calc((100% - 1380px)/2)); background:var(--paper); border-bottom:2px solid var(--ink); }
+    h1 { margin:0 0 6px; font:700 24px "Segoe Print", Arial, sans-serif; }
+    header p { margin:0; color:var(--muted); }
+    .controls { display:flex; flex-wrap:wrap; gap:10px 18px; align-items:center; padding:14px max(20px, calc((100% - 1380px)/2)); background:#fff; border-bottom:1px solid #b9c0c6; }
+    .controls strong { font-size:12px; text-transform:uppercase; letter-spacing:.06em; }
+    button, label { font:inherit; }
+    button { cursor:pointer; padding:7px 10px; border:2px solid var(--ink); border-radius:2px; background:#fff; color:var(--ink); }
+    button:hover, button.active { background:#e9ecef; }
+    .layer-filter.active { border-width:3px; }
+    label { display:inline-flex; gap:5px; align-items:center; white-space:nowrap; }
+    main { max-width:1420px; margin:0 auto; padding:18px; }
+    .hint { margin:0 0 12px; color:var(--muted); }
+    #viewport { height:min(72vh, 790px); min-height:570px; overflow:hidden; position:relative; background:#fff; border:2px solid var(--ink); cursor:grab; touch-action:none; }
+    #viewport.dragging { cursor:grabbing; }
+    #board { position:absolute; width:1320px; height:770px; transform-origin:0 0; }
+    .layer { position:absolute; left:18px; width:1284px; border:2px dashed #6b737c; padding:10px; pointer-events:none; }
+    .layer h2 { margin:0; font:700 13px "Segoe Print", Arial, sans-serif; color:#30363b; }
+    #business { top:18px; height:178px; }
+    #application { top:212px; height:340px; }
+    #technology { top:568px; height:182px; }
+    svg { position:absolute; inset:0; width:1320px; height:770px; overflow:visible; pointer-events:none; }
+    .relation { fill:none; stroke-width:2.4; marker-end:url(#arrow); pointer-events:stroke; }
+    .relation.data { stroke:#1677c8; } .relation.service { stroke:#198754; }
+    .relation.access { stroke:#e07918; stroke-dasharray:7 5; } .relation.trigger { stroke:#c33232; }
+    .relation.assignment { stroke:#7548b8; stroke-dasharray:4 5; } .relation.composition { stroke:#69717a; }
+    .relation.hot { stroke-width:5; filter:drop-shadow(0 0 3px currentColor); }
+    .relation.dim { opacity:.12; }
+    .relation-label { font-size:11px; fill:#30363b; paint-order:stroke; stroke:#fff; stroke-width:4px; stroke-linejoin:round; }
+    .node { position:absolute; width:170px; min-height:69px; padding:10px; background:var(--paper); border:2px solid #252b30; border-radius:2px; cursor:pointer; z-index:2; transition:transform .16s, outline .16s, opacity .16s; }
+    .node:hover, .node.hot { transform:translateY(-3px); outline:3px solid #222; outline-offset:2px; }
+    .node.dim { opacity:.18; }
+    .node.data-object { border-style:dashed; }
+    .node.decision { border:5px double #222; }
+    .node .simple { display:block; font-weight:700; line-height:1.15; }
+    .node .technical { display:block; margin-top:5px; color:var(--muted); font-size:11px; line-height:1.15; }
+    #tooltip { position:fixed; width:min(330px, calc(100vw - 28px)); padding:14px; background:#fff; border:2px solid #171a1d; z-index:10; box-shadow:none; display:none; }
+    #tooltip.visible { display:block; }
+    #tooltip h3 { margin:0 25px 7px 0; font-size:16px; }
+    #tooltip p { margin:6px 0; line-height:1.35; }
+    #tooltip b { font-size:12px; text-transform:uppercase; }
+    #close-tip { position:absolute; top:6px; right:6px; padding:2px 7px; }
+    .legend, .glossary { margin-top:18px; padding:16px; background:#fff; border:2px solid #252b30; }
+    .legend h2, .glossary h2 { margin:0 0 10px; font-size:17px; }
+    .legend-grid { display:flex; flex-wrap:wrap; gap:9px 20px; }
+    .key { display:flex; align-items:center; gap:7px; }
+    .swatch { width:30px; border-top:3px solid; } .swatch.access,.swatch.assignment { border-top-style:dashed; }
+    #flow-message { min-height:21px; margin-left:auto; color:#20262b; font-weight:700; }
+    table { width:100%; border-collapse:collapse; background:#fff; }
+    th, td { padding:10px; border:1px solid #929aa2; text-align:left; vertical-align:top; }
+    th { background:#eef0f2; }
+    @media (max-width:720px) { header { padding:16px; } .controls { padding:12px 16px; } main { padding:12px; } #viewport { height:550px; } #flow-message { width:100%; margin-left:0; } table { font-size:12px; } }
   </style>
 </head>
 <body>
-  <main class="page">
-    <header class="head">
-      <div><div class="brand"><span class="mark">M</span> MOTORA</div><h1>Arquitectura ArchiMate interactiva</h1><p class="intro">Explora cómo se conectan las funciones reales del registro, consulta y modificación de clientes. Pasa el cursor sobre un elemento o conexión; haz clic para fijar su explicación.</p></div>
-      <div class="hint">Rueda: zoom · Arrastra el lienzo: mover · Clic: fijar información</div>
-    </header>
-    <section class="controls" aria-label="Controles del diagrama">
-      <div class="control-group" id="layer-controls"><span>CAPAS</span><button class="filter active" data-layer="all">Todas</button><button class="filter" data-layer="business">Negocio</button><button class="filter" data-layer="application">Aplicación</button><button class="filter" data-layer="technology">Tecnología</button></div>
-      <div class="control-group" id="relation-controls"><span>RELACIONES</span></div>
-      <button class="play" id="play" type="button">▶ Reproducir flujo de registro</button>
-    </section>
-    <section class="workspace" id="workspace" aria-label="Diagrama de arquitectura">
-      <svg class="diagram" id="diagram" viewBox="0 0 1320 690" role="img" aria-label="Arquitectura del sistema Motora">
-        <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="context-stroke"/></marker></defs>
-        <g id="panzoom"><g id="layers"></g><g id="edges"></g><g id="nodes"></g></g>
-      </svg>
-      <aside class="tooltip" id="tooltip" hidden aria-live="polite"></aside>
-    </section>
-    <div class="legend" id="legend"></div>
-    <section class="glossary" aria-labelledby="glossary-title"><h2 id="glossary-title">Glosario</h2><table><thead><tr><th>Nombre simple</th><th>Nombre técnico</th><th>Capa</th><th>Para qué sirve</th></tr></thead><tbody id="glossary-body"></tbody></table></section>
+  <header>
+    <h1>Motora · diagrama de arquitectura</h1>
+    <p>Fase 02 — talleres, clientes por taller y código postal. Pasa el cursor o toca un recuadro para entenderlo.</p>
+  </header>
+  <section class="controls" aria-label="Controles del diagrama">
+    <strong>Capas</strong>
+    <button class="layer-filter active" data-layer="business">Negocio</button>
+    <button class="layer-filter active" data-layer="application">Aplicación</button>
+    <button class="layer-filter active" data-layer="technology">Tecnología</button>
+    <strong>Relaciones</strong>
+    <label><input type="checkbox" checked data-kind="data"> Datos</label>
+    <label><input type="checkbox" checked data-kind="service"> Servicio</label>
+    <label><input type="checkbox" checked data-kind="access"> Datos guardados</label>
+    <label><input type="checkbox" checked data-kind="trigger"> Activa</label>
+    <label><input type="checkbox" checked data-kind="assignment"> Responsable</label>
+    <label><input type="checkbox" checked data-kind="composition"> Contiene</label>
+    <button id="play">▷ Reproducir flujo</button><button id="reset">Restablecer vista</button>
+    <span id="flow-message" aria-live="polite"></span>
+  </section>
+  <main>
+    <p class="hint">Arrastra el lienzo para moverte. Usa la rueda del mouse o pellizca para acercar/alejar. Las flechas solamente representan conexiones presentes en el código.</p>
+    <div id="viewport"><div id="board">
+      <div class="layer" id="business"><h2>NEGOCIO · personas y trabajo del taller</h2></div>
+      <div class="layer" id="application"><h2>APLICACIÓN · pantallas, API y reglas</h2></div>
+      <div class="layer" id="technology"><h2>TECNOLOGÍA · dónde se ejecuta y guarda</h2></div>
+      <svg id="edges" viewBox="0 0 1320 770" aria-label="Conexiones entre componentes"><defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="context-stroke"/></marker></defs></svg>
+    </div></div>
+    <section class="legend"><h2>Leyenda de flechas</h2><div class="legend-grid">
+      <div class="key"><i class="swatch" style="color:#1677c8"></i>Flujo de datos</div><div class="key"><i class="swatch" style="color:#198754"></i>Usa un servicio</div><div class="key"><i class="swatch access" style="color:#e07918"></i>Lee / escribe</div><div class="key"><i class="swatch" style="color:#c33232"></i>Activa</div><div class="key"><i class="swatch assignment" style="color:#7548b8"></i>Responsable</div><div class="key"><i class="swatch" style="color:#69717a"></i>Contiene</div>
+    </div></section>
+    <section class="glossary"><h2>Glosario</h2><table><thead><tr><th>Nombre simple</th><th>Nombre técnico</th><th>Capa</th><th>Para qué sirve</th></tr></thead><tbody id="glossary-body"></tbody></table></section>
   </main>
+  <aside id="tooltip" role="dialog" aria-live="polite"><button id="close-tip" aria-label="Cerrar detalle">×</button><div id="tip-content"></div></aside>
   <script>
-    /* Todos los nombres, capas, descripciones y conexiones se editan aquí. */
-    const architecture = {
-      relationTypes:{
-        flow:{label:'Flujo de datos',color:'#1976d2',style:'solid'},
-        service:{label:'Uso / servicio',color:'#25965a',style:'solid'},
-        access:{label:'Acceso a datos',color:'#ed8b22',style:'solid'},
-        trigger:{label:'Activación / disparo',color:'#d34949',style:'solid'},
-        realization:{label:'Asignación / realización',color:'#865ac7',style:'dashed'},
-        composition:{label:'Composición / agregación',color:'#708090',style:'solid'}
-      },
-      layers:{
-        business:{label:'NEGOCIO',subtitle:'Actor y proceso del taller',color:'#f5df82',y:25,h:150},
-        application:{label:'APLICACIÓN',subtitle:'Vue, API Django y lógica del caso de uso',color:'#afd6f4',y:195,h:290},
-        technology:{label:'TECNOLOGÍA',subtitle:'Persistencia y almacenamiento gestionados por Docker',color:'#b9dfbd',y:505,h:150}
-      },
-      elements:[
-        {id:'actor',name:'Administrador / Recepcionista',type:'Actor de negocio',layer:'business',x:55,y:85,w:190,h:64,description:'Usuario autorizado que opera el módulo de clientes.',receives:'Pantalla de login, avisos y fichas de clientes.',sends:'Credenciales y datos del formulario.'},
-        {id:'process',name:'Gestión de clientes',type:'Proceso de negocio',layer:'business',x:330,y:85,w:190,h:64,description:'Registro, consulta y modificación de clientes del taller.',receives:'Solicitud autenticada del usuario.',sends:'Caso de uso de alta, consulta o edición.'},
-        {id:'vue',name:'Vue · main.js',type:'Componente de aplicación',layer:'application',x:55,y:285,w:175,h:70,description:'Muestra el menú, formulario, tarjetas, detalle y mensajes; usa fetch y FormData.',receives:'Sesión, JSON, errores de campo y fotografía.',sends:'GET, POST multipart y PUT multipart a la API.'},
-        {id:'auth',name:'Autenticación y sesión',type:'Servicio de aplicación',layer:'application',x:285,y:230,w:175,h:70,description:'Login, cookie de sesión HTTP-only, CSRF y consulta de usuario activo.',receives:'Credenciales y token CSRF.',sends:'Sesión y rol del usuario.'},
-        {id:'views',name:'Django · views.py',type:'Componente de aplicación',layer:'application',x:285,y:365,w:175,h:70,description:'Expone rutas REST de clientes y transforma HTTP/Multipart en respuestas JSON.',receives:'Peticiones REST y archivos de fotografía.',sends:'Datos normalizados hacia la fachada y respuestas HTTP.'},
-        {id:'permission',name:'roles_required',type:'Función de aplicación',layer:'application',x:520,y:230,w:175,h:70,description:'Comprueba sesión y permite sólo ADMIN o RECEPCION en operaciones de clientes.',receives:'Usuario de la sesión y rol requerido.',sends:'Autorización o respuesta 401/403.'},
-        {id:'facade',name:'ClientFacade',type:'Componente de aplicación',layer:'application',x:520,y:365,w:175,h:70,description:'Coordina registro, listado, detalle y actualización sin conocer Vue ni HTTP.',receives:'Datos validados del controlador y fotografía.',sends:'Cliente creado, actualizado, listado o error de duplicado.'},
-        {id:'validation',name:'Validación y duplicados',type:'Función de aplicación',layer:'application',x:755,y:230,w:190,h:70,description:'Valida campos, foto PNG/JPG de hasta 15 MB y detecta correo, teléfono o nombre+fecha repetidos.',receives:'Datos de cliente y foto.',sends:'Campos válidos o errores 422/409.'},
-        {id:'repository',name:'ClientRepository',type:'Componente de aplicación',layer:'application',x:755,y:365,w:190,h:70,description:'Único componente que usa el ORM para buscar, guardar, listar y actualizar clientes.',receives:'Operación y datos ya validados.',sends:'Objetos Cliente persistidos.'},
-        {id:'mysql',name:'MySQL · clientes',type:'Nodo / objeto de datos',layer:'technology',x:350,y:565,w:210,h:70,description:'Tabla clientes con datos personales, contacto, dirección, correos y restricciones únicas.',receives:'INSERT, SELECT y UPDATE del repositorio.',sends:'Filas de Cliente y resultado de índices únicos.'},
-        {id:'media',name:'Volumen media_data',type:'Nodo tecnológico',layer:'technology',x:750,y:565,w:210,h:70,description:'Almacenamiento persistente de fotografías; Django las publica por /media/.',receives:'Archivo de imagen validado.',sends:'Ruta pública de la fotografía.'}
-      ],
-      relations:[
-        {id:'r1',from:'actor',to:'process',type:'trigger',label:'Inicia gestión de clientes',path:'M245 117 H330'},
-        {id:'r2',from:'process',to:'vue',type:'flow',label:'Captura datos del cliente',path:'M425 149 V190 H142 V285'},
-        {id:'r3',from:'vue',to:'auth',type:'service',label:'Solicita login, CSRF y sesión',path:'M230 320 H260 V265 H285'},
-        {id:'r4',from:'auth',to:'permission',type:'flow',label:'Entrega usuario y rol activo',path:'M460 265 H520'},
-        {id:'r5',from:'vue',to:'views',type:'flow',label:'POST /register, GET /clients, PUT /:id',path:'M230 320 H260 V400 H285'},
-        {id:'r6',from:'views',to:'permission',type:'service',label:'Exige autorización por rol',path:'M460 400 H490 V300 H520'},
-        {id:'r7',from:'views',to:'facade',type:'realization',label:'Invoca caso de uso de clientes',path:'M460 400 H520'},
-        {id:'r8',from:'facade',to:'validation',type:'trigger',label:'Activa validación y búsqueda de duplicado',path:'M695 400 H725 V265 H755'},
-        {id:'r9',from:'facade',to:'repository',type:'service',label:'Solicita persistencia o consulta',path:'M695 400 H755'},
-        {id:'r10',from:'facade',to:'repository',type:'access',label:'Busca duplicados antes de escribir',path:'M695 412 H725 V448 H850 V435'},
-        {id:'r11',from:'repository',to:'mysql',type:'access',label:'Lee y escribe filas de clientes',path:'M850 435 V490 H455 V565'},
-        {id:'r12',from:'repository',to:'media',type:'access',label:'Guarda la fotografía mediante el modelo Cliente',path:'M945 400 H970 V530 H855 V565'},
-        {id:'r13',from:'media',to:'vue',type:'flow',label:'Devuelve photo_url en la ficha',path:'M750 600 H665 V475 H142 V355'}
-      ],
-      flow:['actor','process','vue','views','permission','facade','validation','repository','mysql']
-    };
-
-    const simpleNames={actor:'Persona autorizada',process:'Gestión de clientes',vue:'Pantallas del sistema',auth:'Inicio de sesión',views:'Puerta de la API',permission:'Revisión de permisos',facade:'Coordinador de clientes',validation:'Revisión de datos',repository:'Acceso a clientes',mysql:'Base de datos de clientes',media:'Fotos de clientes'};
-    const $=s=>document.querySelector(s), svgNS='http://www.w3.org/2000/svg';
-    const svgEl=(tag,attrs={})=>{const el=document.createElementNS(svgNS,tag);Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k,v));return el};
-    const workspace=$('#workspace'), tooltip=$('#tooltip'), nodes=$('#nodes'), edges=$('#edges'), layers=$('#layers');
-    let pinned=null, active=null, visibleLayer='all', scale=1, point={x:0,y:0}, dragging=false, start={x:0,y:0};
-    const elementById=Object.fromEntries(architecture.elements.map(e=>[e.id,e]));
-    Object.entries(architecture.layers).forEach(([id,l])=>{const g=svgEl('g',{'data-layer':id});g.append(svgEl('rect',{x:18,y:l.y,width:1284,height:l.h,rx:12,fill:l.color,class:'layer-bg'}));const title=svgEl('text',{x:36,y:l.y+29,class:'layer-title'});title.textContent=l.label;g.append(title);const sub=svgEl('text',{x:36,y:l.y+46,class:'layer-subtitle'});sub.textContent=l.subtitle;g.append(sub);layers.append(g)});
-    architecture.relations.forEach(r=>{const type=architecture.relationTypes[r.type],path=svgEl('path',{d:r.path,class:'edge '+(type.style==='dashed'?'dashed':''),'data-id':r.id,'data-type':r.type,'data-from':r.from,'data-to':r.to,style:'--color:'+type.color});path.addEventListener('mouseenter',e=>showRelation(r,e));path.addEventListener('mouseleave',()=>{if(!pinned)clearActive()});path.addEventListener('click',e=>{e.stopPropagation();pinned=r;showRelation(r,e,true)});edges.append(path);const label=svgEl('text',{x:0,y:0,class:'edge-label','data-edge-label':r.id});const coords=r.path.match(/(\d+) (\d+)/g);if(coords&&coords[1]){const [x,y]=coords[Math.floor(coords.length/2)].split(' ');label.setAttribute('x',+x+5);label.setAttribute('y',+y-6)}label.textContent=architecture.relationTypes[r.type].label;edges.append(label)});
-    architecture.elements.forEach(e=>{const g=svgEl('g',{class:'node','data-id':e.id,'data-layer':e.layer,tabindex:'0',role:'button','aria-label':e.name});g.append(svgEl('rect',{x:e.x,y:e.y,width:e.w,height:e.h,rx:1,fill:architecture.layers[e.layer].color}));const title=svgEl('text',{x:e.x+13,y:e.y+28,class:'node-title'});title.textContent=simpleNames[e.id]||e.name;g.append(title);const type=svgEl('text',{x:e.x+13,y:e.y+47,class:'node-type'});type.textContent=e.name+' · '+e.type;g.append(type);const layer=svgEl('text',{x:e.x+13,y:e.y+61,class:'node-layer'});layer.textContent=architecture.layers[e.layer].label;g.append(layer);['mouseenter','focus'].forEach(ev=>g.addEventListener(ev,event=>showElement(e,event)));['mouseleave','blur'].forEach(ev=>g.addEventListener(ev,()=>{if(!pinned)clearActive()}));g.addEventListener('click',event=>{event.stopPropagation();pinned=e;showElement(e,event,true)});nodes.append(g)});
-    function related(id){return architecture.relations.filter(r=>r.from===id||r.to===id)}
-    function dimAll(ids=[],relationIds=[]){document.querySelectorAll('.node,.edge,.edge-label').forEach(el=>el.classList.add('dim'));ids.forEach(id=>document.querySelector('.node[data-id="'+id+'"]')?.classList.remove('dim'));relationIds.forEach(id=>{document.querySelector('.edge[data-id="'+id+'"]')?.classList.remove('dim');document.querySelector('[data-edge-label="'+id+'"]').classList.remove('dim')})}
-    function showElement(e,event,fixed=false){active=e.id;const rels=related(e.id),ids=[e.id,...rels.flatMap(r=>[r.from,r.to])];dimAll(ids,rels.map(r=>r.id));document.querySelector('.node[data-id="'+e.id+'"]')?.classList.add('selected');rels.forEach(r=>document.querySelector('.edge[data-id="'+r.id+'"]')?.classList.add('highlight'));showCard({title:e.name,meta:e.type+' · Capa '+architecture.layers[e.layer].label,description:e.description,receives:e.receives,sends:e.sends},event,fixed)}
-    function showRelation(r,event,fixed=false){active=r.id;dimAll([r.from,r.to],[r.id]);document.querySelector('.edge[data-id="'+r.id+'"]')?.classList.add('highlight');const type=architecture.relationTypes[r.type];showCard({title:type.label,meta:elementById[r.from].name+' → '+elementById[r.to].name,description:r.label,receives:'Origen: '+elementById[r.from].name,sends:'Destino: '+elementById[r.to].name},event,fixed)}
-    function showCard(info,event,fixed){tooltip.innerHTML='<button class="close" aria-label="Cerrar">×</button><h2>'+info.title+'</h2><p class="meta">'+info.meta+'</p><p>'+info.description+'</p><div class="io"><div><b>RECIBE</b>'+info.receives+'</div><div><b>ENVÍA</b>'+info.sends+'</div></div>';tooltip.hidden=false;const rect=workspace.getBoundingClientRect(),x=Math.min((event.clientX||rect.left+40)-rect.left+14,rect.width-355),y=Math.min((event.clientY||rect.top+40)-rect.top+14,rect.height-220);tooltip.style.left=Math.max(12,x)+'px';tooltip.style.top=Math.max(12,y)+'px';tooltip.querySelector('.close').onclick=()=>{pinned=null;clearActive()}}
-    function clearActive(){if(pinned)return;active=null;tooltip.hidden=true;document.querySelectorAll('.node,.edge,.edge-label').forEach(el=>el.classList.remove('dim','selected','highlight'))}
-    workspace.addEventListener('click',()=>{pinned=null;clearActive()});
-    document.querySelectorAll('.filter').forEach(btn=>btn.addEventListener('click',()=>{visibleLayer=btn.dataset.layer;document.querySelectorAll('.filter').forEach(b=>b.classList.toggle('active',b===btn));document.querySelectorAll('[data-layer]').forEach(el=>el.classList.toggle('hidden',visibleLayer!=='all'&&el.dataset.layer!==visibleLayer));architecture.relations.forEach(r=>{const allowed=visibleLayer==='all'||elementById[r.from].layer===visibleLayer||elementById[r.to].layer===visibleLayer;document.querySelector('.edge[data-id="'+r.id+'"]').classList.toggle('hidden',!allowed);document.querySelector('[data-edge-label="'+r.id+'"]').classList.toggle('hidden',!allowed)})}));
-    const relations=$('#relation-controls');Object.entries(architecture.relationTypes).forEach(([id,t])=>{const label=document.createElement('label');label.className='check';label.style.setProperty('--relation',t.color);label.innerHTML='<input checked type="checkbox" data-relation="'+id+'"><i></i>'+t.label;relations.append(label)});relations.addEventListener('change',e=>{if(!e.target.dataset.relation)return;const type=e.target.dataset.relation;document.querySelectorAll('.edge[data-type="'+type+'"], [data-edge-label]').forEach(el=>{if(el.dataset.edgeLabel){const r=architecture.relations.find(x=>x.id===el.dataset.edgeLabel);if(r.type!==type)return}el.classList.toggle('hidden',!e.target.checked)})});
-    const panzoom=$('#panzoom');function transform(){panzoom.setAttribute('transform','translate('+point.x+' '+point.y+') scale('+scale+')')}workspace.addEventListener('wheel',e=>{e.preventDefault();scale=Math.max(.55,Math.min(1.7,scale+(e.deltaY<0?.1:-.1)));transform()},{passive:false});workspace.addEventListener('pointerdown',e=>{if(e.target.closest('.node,.edge,.tooltip,button,input'))return;dragging=true;start={x:e.clientX-point.x,y:e.clientY-point.y};workspace.setPointerCapture(e.pointerId)});workspace.addEventListener('pointermove',e=>{if(!dragging)return;point={x:e.clientX-start.x,y:e.clientY-start.y};transform()});workspace.addEventListener('pointerup',()=>dragging=false);
-    $('#play').addEventListener('click',async()=>{pinned=null;for(const id of architecture.flow){const el=elementById[id];showElement(el,{clientX:workspace.getBoundingClientRect().left+30,clientY:workspace.getBoundingClientRect().top+30},true);await new Promise(r=>setTimeout(r,1050))}pinned=null;clearActive()});
-    Object.entries(architecture.relationTypes).forEach(([id,t])=>{const span=document.createElement('span');span.style.setProperty('--relation',t.color);span.innerHTML='<i class="'+(t.style==='dashed'?'dash':'')+'"></i>'+t.label;$('#legend').append(span)});
-    architecture.elements.forEach(e=>{const row=document.createElement('tr');row.innerHTML='<td>'+(simpleNames[e.id]||e.name)+'</td><td>'+e.name+' · '+e.type+'</td><td>'+architecture.layers[e.layer].label+'</td><td>'+e.description+'</td>';$('#glossary-body').append(row)});
+  /* Edita solo este objeto para ajustar elementos, relaciones o el flujo. */
+  const architecture = {
+    elements: [
+      {id:'admin', simple:'Administrador', technical:'User.role = ADMIN', type:'Actor de negocio', layer:'business', x:70,y:84, description:'Gestiona talleres y clientes. Es el único rol que puede suspender o activar a un cliente.', receives:'Inicio de sesión y confirmaciones.', sends:'Altas de taller, cambios de cliente y acciones de estatus.', code:'backend/core/models.py · frontend/src/main.js'},
+      {id:'reception', simple:'Recepcionista', technical:'User.role = RECEPCION', type:'Actor de negocio', layer:'business', x:280,y:84, description:'Registra, consulta y modifica clientes autorizados; no administra talleres ni el estatus.', receives:'Inicio de sesión y datos de clientes.', sends:'Solicitudes de registro, consulta y edición.', code:'backend/core/models.py · frontend/src/main.js'},
+      {id:'management', simple:'Gestión de clientes y talleres', technical:'Caso de uso real', type:'Proceso de negocio', layer:'business', x:520,y:84, description:'Reúne el registro de talleres, clientes ligados a un taller, consulta filtrada y administración de estatus.', receives:'Datos capturados por usuarios autorizados.', sends:'Solicitudes a la interfaz del sistema.', code:'frontend/src/main.js'},
+      {id:'vue', simple:'Pantallas del sistema', technical:'frontend/src/main.js', type:'Componente de aplicación', layer:'application', x:48,y:285, description:'Muestra el menú según el rol, formularios de taller/cliente, tarjetas, detalle, filtros, paginación y mensajes.', receives:'Respuestas REST, sesión y datos del catálogo postal.', sends:'Solicitudes autenticadas y archivos de fotografía.', code:'frontend/src/main.js'},
+      {id:'auth', simple:'Inicio de sesión seguro', technical:'login_view · csrf · me', type:'Servicio de aplicación', layer:'application', x:268,y:285, description:'Crea la sesión Django, entrega el token CSRF y devuelve el usuario actual sin exponer su contraseña.', receives:'Usuario, contraseña y token CSRF.', sends:'Cookie de sesión y rol del usuario.', code:'backend/core/views.py'},
+      {id:'api', simple:'API del taller', technical:'backend/core/views.py', type:'Componente de aplicación', layer:'application', x:488,y:285, description:'Recibe rutas REST de clientes, talleres y códigos postales y devuelve respuestas JSON o validaciones.', receives:'HTTP desde Vue con sesión activa.', sends:'Llamadas a Facades y respuestas JSON.', code:'backend/core/urls.py · backend/core/views.py'},
+      {id:'roles', simple:'Revisión de permisos', technical:'roles_required', type:'Función de aplicación', layer:'application', x:708,y:285, description:'Antes de una acción comprueba que la sesión exista y que el rol esté autorizado. Suspender/activar queda solo para ADMIN.', receives:'Sesión y roles permitidos por la ruta.', sends:'Permite continuar o responde 401/403.', code:'backend/core/auth.py'},
+      {id:'clientFacade', simple:'Reglas de clientes', technical:'ClientFacade', type:'Componente de aplicación', layer:'application', x:48,y:416, description:'Coordina crear, listar paginado, editar, suspender y activar clientes; detecta duplicados y valida que el taller exista.', receives:'Datos y archivos recibidos por la API.', sends:'Cliente, lista paginada o mensaje de error.', code:'backend/core/facades.py'},
+      {id:'workshopFacade', simple:'Reglas de talleres', technical:'WorkshopFacade', type:'Componente de aplicación', layer:'application', x:268,y:416, description:'Coordina el alta de talleres y evita RFC o nombre-dirección duplicados.', receives:'Datos y foto del taller.', sends:'Taller guardado o errores por campo.', code:'backend/core/facades.py'},
+      {id:'postalFacade', simple:'Consulta de código postal', technical:'PostalCodeFacade', type:'Componente de aplicación', layer:'application', x:488,y:416, description:'Busca CP, municipio, estado y colonias para autocompletar direcciones verificadas.', receives:'Código postal de cinco dígitos.', sends:'Estado, municipio y colonias o resultado no verificado.', code:'backend/core/facades.py'},
+      {id:'dataAccess', simple:'Validación y repositorios', technical:'validators.py · repositories.py', type:'Componente de aplicación', layer:'application', x:708,y:416, description:'Valida formatos, duplicados y coincidencia con SEPOMEX; lee y escribe por medio de los repositorios REST internos.', receives:'Datos normalizados desde las Facades.', sends:'Modelos persistidos, consultas y errores claros.', code:'backend/core/validators.py · backend/core/repositories.py'},
+      {id:'data', simple:'Datos del sistema', technical:'Cliente · Taller · CodigoPostal', type:'Objeto de datos', layer:'application', x:928,y:416, shape:'data-object', description:'Representa la información de negocio: cliente con taller y estatus, taller y catálogo postal.', receives:'Cambios validados.', sends:'Datos para guardar y mostrar.', code:'backend/core/models.py'},
+      {id:'django', simple:'Servidor Django', technical:'docker-compose.yml · backend', type:'Nodo tecnológico', layer:'technology', x:90,y:640, description:'Ejecuta la API de Django dentro del contenedor backend.', receives:'Solicitudes HTTP y variables de entorno.', sends:'Respuestas HTTP y acceso a MySQL/media.', code:'docker-compose.yml · backend/Dockerfile'},
+      {id:'mysql', simple:'Base de datos MySQL', technical:'clientes · talleres · codigos_postales', type:'Nodo tecnológico', layer:'technology', x:430,y:640, description:'Guarda usuarios, talleres, clientes, estatus y el catálogo importado de códigos postales.', receives:'Lecturas y escrituras de repositorios.', sends:'Registros consultados o persistidos.', code:'backend/core/models.py · database/seeds/import_sepomex.py'},
+      {id:'media', simple:'Fotos cargadas', technical:'media_data', type:'Artefacto tecnológico', layer:'technology', x:770,y:640, description:'Volumen de Docker donde se conservan las fotografías válidas subidas para talleres y clientes.', receives:'Archivos PNG/JPG válidos de hasta 15 MB.', sends:'Ruta pública de fotografía.', code:'docker-compose.yml · backend/core/facades.py'}
+    ],
+    relations: [
+      {id:'r1',from:'admin',to:'management',kind:'trigger',label:'administra'}, {id:'r2',from:'reception',to:'management',kind:'assignment',label:'registra y consulta'},
+      {id:'r3',from:'management',to:'vue',kind:'data',label:'datos capturados'}, {id:'r4',from:'auth',to:'vue',kind:'service',label:'sesión y CSRF'},
+      {id:'r5',from:'vue',to:'api',kind:'data',label:'REST + foto'}, {id:'r6',from:'roles',to:'api',kind:'service',label:'autoriza'},
+      {id:'r7',from:'api',to:'clientFacade',kind:'data',label:'clientes'}, {id:'r8',from:'api',to:'workshopFacade',kind:'data',label:'talleres'}, {id:'r9',from:'api',to:'postalFacade',kind:'data',label:'CP'},
+      {id:'r10',from:'clientFacade',to:'dataAccess',kind:'service',label:'valida y guarda'}, {id:'r11',from:'workshopFacade',to:'dataAccess',kind:'service',label:'valida y guarda'}, {id:'r12',from:'postalFacade',to:'dataAccess',kind:'service',label:'consulta catálogo'},
+      {id:'r13',from:'dataAccess',to:'data',kind:'access',label:'lee / escribe'}, {id:'r14',from:'data',to:'mysql',kind:'access',label:'persistencia'}, {id:'r15',from:'dataAccess',to:'media',kind:'access',label:'fotografías'}, {id:'r16',from:'django',to:'api',kind:'composition',label:'ejecuta'}
+    ],
+    flow: [
+      {node:'admin', text:'Un Administrador inicia el proceso.'}, {node:'vue', edge:'r5', text:'La pantalla recoge datos y envía una solicitud REST con sesión.'}, {node:'api', edge:'r7', text:'La API recibe la acción de cliente.'}, {node:'roles', text:'La autorización confirma el rol; activar/suspender exige ADMIN.'}, {node:'clientFacade', edge:'r10', text:'ClientFacade aplica reglas de negocio y duplicados.'}, {node:'dataAccess', edge:'r13', text:'Validadores y repositorios comprueban el catálogo y persisten.'}, {node:'mysql', edge:'r14', text:'MySQL actualiza el estatus activo o suspendido y guarda el resultado.'}, {node:'vue', text:'La interfaz muestra el mensaje de éxito y el cliente actualizado.'}
+    ]
+  };
+  const board=document.querySelector('#board'), viewport=document.querySelector('#viewport'), svg=document.querySelector('#edges'), tooltip=document.querySelector('#tooltip'), tipContent=document.querySelector('#tip-content');
+  const els=new Map(architecture.elements.map(e=>[e.id,e])); let pinned=false, scale=.86, pan={x:25,y:8}, drag=null, flowTimer=null;
+  function connector(a,b){ const dx=b.x-a.x, dy=b.y-a.y; if(Math.abs(dx)>Math.abs(dy)) return [a.x+(dx>0?170:0),a.y+35,b.x+(dx>0?0:170),b.y+35]; return [a.x+85,a.y+(dy>0?69:0),b.x+85,b.y+(dy>0?0:69)]; }
+  function draw(){ document.querySelectorAll('.node').forEach(n=>n.remove()); svg.querySelectorAll('.edge-group').forEach(e=>e.remove()); architecture.elements.forEach(e=>{ const n=document.createElement('button'); n.type='button'; n.className='node '+(e.shape||''); n.id='node-'+e.id; n.style.left=e.x+'px'; n.style.top=e.y+'px'; n.innerHTML=`<span class="simple">${e.simple}</span><span class="technical">${e.technical}</span>`; n.addEventListener('mouseenter',()=>focus(e.id,n)); n.addEventListener('mouseleave',()=>{if(!pinned) clearFocus()}); n.addEventListener('click',ev=>{ev.stopPropagation(); pinned=true; focus(e.id,n,true)}); board.append(n); }); architecture.relations.forEach(r=>{ const a=els.get(r.from), b=els.get(r.to), [x1,y1,x2,y2]=connector(a,b); const g=document.createElementNS('http://www.w3.org/2000/svg','g'); g.classList.add('edge-group'); g.dataset.id=r.id; const path=document.createElementNS('http://www.w3.org/2000/svg','path'); path.setAttribute('d',`M ${x1} ${y1} L ${x2} ${y2}`); path.setAttribute('class',`relation ${r.kind}`); path.style.pointerEvents='stroke'; const label=document.createElementNS('http://www.w3.org/2000/svg','text'); label.setAttribute('x',(x1+x2)/2); label.setAttribute('y',(y1+y2)/2-6); label.setAttribute('text-anchor','middle'); label.setAttribute('class','relation-label'); label.textContent=r.label; g.append(path,label); g.addEventListener('mouseenter',ev=>showRelation(r,ev)); g.addEventListener('mouseleave',()=>{if(!pinned) hideTooltip()}); svg.append(g); }); glossary(); transform(); }
+  function glossary(){ document.querySelector('#glossary-body').innerHTML=architecture.elements.map(e=>`<tr><td>${e.simple}</td><td>${e.technical}</td><td>${layerName(e.layer)}</td><td>${e.description}</td></tr>`).join(''); }
+  function layerName(layer){return ({business:'Negocio',application:'Aplicación',technology:'Tecnología'})[layer]}
+  function focus(id,target,fixed=false){ const linked=new Set([id]), links=new Set(); architecture.relations.forEach(r=>{if(r.from===id||r.to===id){linked.add(r.from);linked.add(r.to);links.add(r.id)}}); document.querySelectorAll('.node').forEach(n=>n.classList.toggle('dim',!linked.has(n.id.slice(5)))); document.querySelectorAll('.node').forEach(n=>n.classList.toggle('hot',linked.has(n.id.slice(5)))); document.querySelectorAll('.edge-group').forEach(g=>{g.querySelector('.relation').classList.toggle('dim',!links.has(g.dataset.id));g.querySelector('.relation').classList.toggle('hot',links.has(g.dataset.id));}); const e=els.get(id); tipContent.innerHTML=`<h3>${e.simple}</h3><p><b>${e.type} · ${layerName(e.layer)}</b></p><p>${e.description}</p><p><b>Recibe:</b> ${e.receives}</p><p><b>Entrega:</b> ${e.sends}</p><p><b>Código:</b> ${e.code}</p>`; showTip(target.getBoundingClientRect(),fixed); }
+  function clearFocus(){ document.querySelectorAll('.node').forEach(n=>n.classList.remove('dim','hot')); document.querySelectorAll('.relation').forEach(n=>n.classList.remove('dim','hot')); hideTooltip(); }
+  function showRelation(r,ev){ tipContent.innerHTML=`<h3>${relationName(r.kind)}</h3><p><b>${els.get(r.from).simple} → ${els.get(r.to).simple}</b></p><p>${r.label}</p>`; showTip({left:ev.clientX,top:ev.clientY,right:ev.clientX,bottom:ev.clientY},false); }
+  function relationName(kind){return ({data:'Flujo de datos',service:'Uso / servicio',access:'Acceso a datos',trigger:'Activación',assignment:'Asignación / responsable',composition:'Composición'})[kind]}
+  function showTip(rect,fixed){ tooltip.classList.add('visible'); const w=tooltip.offsetWidth,h=tooltip.offsetHeight; let x=rect.right+12,y=rect.top; if(x+w>innerWidth-10)x=Math.max(10,rect.left-w-12); if(y+h>innerHeight-10)y=Math.max(10,innerHeight-h-10); tooltip.style.left=x+'px';tooltip.style.top=y+'px'; if(!fixed) pinned=false; }
+  function hideTooltip(){ if(!pinned) tooltip.classList.remove('visible'); }
+  document.querySelector('#close-tip').onclick=()=>{pinned=false;clearFocus()}; document.addEventListener('click',e=>{if(pinned&&!tooltip.contains(e.target)){pinned=false;clearFocus()}});
+  function transform(){ board.style.transform=`translate(${pan.x}px,${pan.y}px) scale(${scale})`; }
+  viewport.addEventListener('wheel',e=>{e.preventDefault(); scale=Math.min(1.25,Math.max(.48,scale*(e.deltaY<0?1.08:.92)));transform()},{passive:false});
+  viewport.addEventListener('pointerdown',e=>{if(e.target.closest('.node'))return;drag={x:e.clientX,y:e.clientY,px:pan.x,py:pan.y};viewport.classList.add('dragging');viewport.setPointerCapture(e.pointerId)}); viewport.addEventListener('pointermove',e=>{if(drag){pan={x:drag.px+e.clientX-drag.x,y:drag.py+e.clientY-drag.y};transform()}}); viewport.addEventListener('pointerup',()=>{drag=null;viewport.classList.remove('dragging')});
+  document.querySelector('#reset').onclick=()=>{scale=.86;pan={x:25,y:8};transform();};
+  document.querySelectorAll('.layer-filter').forEach(b=>b.onclick=()=>{b.classList.toggle('active');const active=b.classList.contains('active'),layer=b.dataset.layer;document.querySelector('#'+layer).style.display=active?'block':'none';architecture.elements.filter(e=>e.layer===layer).forEach(e=>document.querySelector('#node-'+e.id).style.display=active?'block':'none');architecture.relations.forEach(r=>{if(els.get(r.from).layer===layer||els.get(r.to).layer===layer) document.querySelector(`[data-id="${r.id}"]`).style.display=active?'block':'none'});});
+  document.querySelectorAll('input[data-kind]').forEach(c=>c.onchange=()=>document.querySelectorAll('.relation.'+c.dataset.kind).forEach(p=>p.parentElement.style.display=c.checked?'block':'none'));
+  document.querySelector('#play').onclick=()=>{clearTimeout(flowTimer);pinned=false;let i=0;const next=()=>{if(i>=architecture.flow.length){document.querySelector('#flow-message').textContent='Flujo terminado.';clearFocus();return}const step=architecture.flow[i++];document.querySelector('#flow-message').textContent=step.text;const node=document.querySelector('#node-'+step.node);focus(step.node,node);if(step.edge){const edge=document.querySelector(`[data-id="${step.edge}"] .relation`);edge.classList.add('hot')}flowTimer=setTimeout(next,1850)};next();};
+  draw();
   </script>
 </body>
 </html>
