@@ -37,6 +37,8 @@ services:
       - "8000:8000"
     volumes:
       - media_data:/app/media
+      - ./database:/app/database:ro
+      - ./database/seeds:/app/database/seeds:ro
 
   frontend:
     image: node:24-alpine

@@ -5,8 +5,8 @@ from django.middleware.csrf import get_token
 from django.http.multipartparser import MultiPartParser, MultiPartParserError
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 from django.views.decorators.csrf import ensure_csrf_cookie
-from .facades import ClientFacade
-from .models import WorkOrder, User
+from .facades import ClientFacade, PostalCodeFacade, WorkshopFacade
+from .models import WorkOrder, User, Client
 from .permissions import roles_required
 from .validators import ClientInputError
 
@@ -33,6 +33,9 @@ def client_data(client, request):
         'work_email': client.work_email,
         'photo_url': request.build_absolute_uri(client.photo.url) if client.photo else None,
         'created_at': client.created_at.isoformat(),
+        'workshop_id': client.workshop_id,
+        'workshop_name': client.workshop.name if client.workshop_id else None,
+        'status': client.status,
     }
 
 @require_GET
@@ -74,8 +77,13 @@ def orders(request):
 @roles_required(User.Role.ADMIN, User.Role.RECEPTION)
 def clients(request):
     """Consulta REST de clientes disponible sólo para Administración y Recepción."""
-    facade = ClientFacade()
-    return JsonResponse({'clients': [client_data(client, request) for client in facade.list_clients()]})
+    page = max(int(request.GET.get('page', 1)), 1)
+    workshop_id = request.GET.get('workshop_id') or None
+    status = request.GET.get('status') or None
+    order = request.GET.get('order', 'full_name')
+    direction = request.GET.get('direction', 'asc')
+    items, total = ClientFacade().list_clients(workshop_id=workshop_id, status=status, order=order, direction=direction, page=page)
+    return JsonResponse({'clients': [client_data(client, request) for client in items], 'total': total, 'pages': max((total + 9) // 10, 1), 'page': page, 'order': order, 'direction': direction})
 
 
 @require_POST
@@ -127,6 +135,34 @@ def client_detail(request, client_id):
             'client': serialized,
         }, status=409)
     return JsonResponse({'detail': 'Cliente actualizado exitosamente', 'client': serialized})
+
+@require_GET
+@roles_required(User.Role.ADMIN, User.Role.RECEPTION)
+def postal_code(request, cp):
+    result = PostalCodeFacade().lookup(cp)
+    return JsonResponse({'verified': bool(result), 'data': result})
+
+def workshop_data(workshop, request):
+    return {'id': workshop.id, 'name': workshop.name, 'street': workshop.street, 'neighborhood': workshop.neighborhood, 'municipality': workshop.municipality, 'state': workshop.state, 'postal_code': workshop.postal_code, 'business_name': workshop.business_name, 'phone': workshop.phone, 'rfc': workshop.rfc, 'contact_email': workshop.contact_email, 'photo_url': request.build_absolute_uri(workshop.photo.url) if workshop.photo else None}
+
+@require_http_methods(['GET', 'POST'])
+@roles_required(User.Role.ADMIN, User.Role.RECEPTION)
+def workshops(request):
+    facade = WorkshopFacade()
+    if request.method == 'GET': return JsonResponse({'workshops': [workshop_data(item, request) for item in facade.list()]})
+    if not (request.user.is_superuser or request.user.role == User.Role.ADMIN):
+        return JsonResponse({'detail': 'Sólo Administración puede registrar talleres.'}, status=403)
+    try: result = facade.register(request.POST, request.FILES.get('photo'))
+    except ClientInputError as error: return JsonResponse({'detail': 'Revisa los campos marcados.', 'fields': error.fields}, status=422)
+    if not result.created: return JsonResponse({'detail': 'Ya existe un taller con ese RFC o dirección.', 'workshop': workshop_data(result.client, request)}, status=409)
+    return JsonResponse({'detail': 'Taller guardado exitosamente', 'workshop': workshop_data(result.client, request)}, status=201)
+
+@require_POST
+@roles_required(User.Role.ADMIN)
+def suspend_client(request, client_id):
+    client = ClientFacade().suspend(client_id)
+    if not client: return JsonResponse({'detail': 'Cliente no encontrado.'}, status=404)
+    return JsonResponse({'detail': 'Cliente suspendido exitosamente', 'client': client_data(client, request)})
 
 @require_POST
 def register(request):

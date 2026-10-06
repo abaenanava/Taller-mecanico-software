@@ -4,7 +4,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.test.client import BOUNDARY, MULTIPART_CONTENT, encode_multipart
 
-from .models import Client, User
+from .models import Client, User, Workshop
 
 
 PNG = b'\x89PNG\r\n\x1a\n' + b'\x00' * 32
@@ -17,6 +17,7 @@ class ClientRegistrationApiTests(TestCase):
         self.administrator = User.objects.create_user(username='admin_test', password='PruebaSegura2026!', role=User.Role.ADMIN)
         self.receptionist = User.objects.create_user(username='reception_test', password='PruebaSegura2026!', role=User.Role.RECEPTION)
         self.viewer = User.objects.create_user(username='viewer_test', password='PruebaSegura2026!', role=User.Role.VIEWER)
+        self.workshop = Workshop.objects.create(name='Taller Pruebas', street='Calle Uno', neighborhood='Centro', municipality='Ciudad de México', state='Ciudad de México', postal_code='01000', business_name='Taller Pruebas SA', phone='+525511111111', rfc='TLP010101AAA', contact_email='taller@example.com', photo=SimpleUploadedFile('taller.png', PNG, content_type='image/png'))
 
     def payload(self, **overrides):
         data = {
@@ -25,6 +26,7 @@ class ClientRegistrationApiTests(TestCase):
             'street': 'Av. Reforma 100', 'neighborhood': 'Centro', 'municipality': 'Cuauhtémoc',
             'state': 'Ciudad de México', 'postal_code': '06000', 'personal_email': 'maria@example.com',
             'work_email': 'maria.trabajo@example.com',
+            'workshop_id': str(self.workshop.id),
             'photo': SimpleUploadedFile('cliente.png', PNG, content_type='image/png'),
         }
         data.update(overrides)
@@ -52,7 +54,7 @@ class ClientRegistrationApiTests(TestCase):
                     personal_email=f'cliente{number}@example.com',
                 )
                 created = self.client.post('/api/clients/register/', data)
-                self.assertEqual(created.status_code, 201)
+                self.assertEqual(created.status_code, 201, created.content.decode())
                 self.assertEqual(created.json()['detail'], 'Registro guardado exitosamente')
                 client_id = created.json()['client']['id']
 
@@ -94,3 +96,33 @@ class ClientRegistrationApiTests(TestCase):
         self.assertIn('personal_phone', response.json()['fields'])
         self.assertIn('work_phone', response.json()['fields'])
         self.assertIn('postal_code', response.json()['fields'])
+
+    def test_admin_creates_workshop_and_reception_cannot(self):
+        workshop = {
+            'name': 'Taller Norte', 'street': 'Avenida Uno', 'neighborhood': 'Centro', 'municipality': 'Monterrey',
+            'state': 'Nuevo León', 'postal_code': '64000', 'business_name': 'Taller Norte SA',
+            'phone': '5511111111', 'rfc': 'ABC010101AAA', 'contact_email': 'norte@example.com',
+            'photo': SimpleUploadedFile('taller.png', PNG, content_type='image/png'),
+        }
+        self.client.force_login(self.administrator)
+        self.assertEqual(self.client.post('/api/talleres/', workshop).status_code, 201)
+        workshop['photo'] = SimpleUploadedFile('taller2.png', PNG, content_type='image/png')
+        self.assertEqual(self.client.post('/api/talleres/', workshop).status_code, 409)
+        workshop['rfc'] = 'RFC-MALO'
+        self.assertEqual(self.client.post('/api/talleres/', workshop).status_code, 422)
+        self.client.force_login(self.receptionist)
+        workshop['rfc'] = 'DEF010101AAA'
+        self.assertEqual(self.client.post('/api/talleres/', workshop).status_code, 403)
+
+    def test_only_administrator_suspends_client_and_list_paginates(self):
+        self.client.force_login(self.administrator)
+        for number in range(12):
+            data = self.payload(full_name=f'Cliente Lista {number} Prueba', personal_phone=f'5530000{number:03d}', personal_email=f'lista{number}@example.com')
+            self.assertEqual(self.client.post('/api/clients/register/', data).status_code, 201)
+        listed = self.client.get('/api/clients/?page=1&order=full_name&direction=asc')
+        self.assertEqual(len(listed.json()['clients']), 10)
+        self.assertEqual(listed.json()['total'], 12)
+        client_id = listed.json()['clients'][0]['id']
+        self.assertEqual(self.client.post(f'/api/clients/{client_id}/suspend/').status_code, 200)
+        self.client.force_login(self.receptionist)
+        self.assertEqual(self.client.post(f'/api/clients/{client_id}/suspend/').status_code, 403)

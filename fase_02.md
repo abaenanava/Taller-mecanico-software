@@ -19,3 +19,31 @@
 `Vue (FormData) → API REST Django → ClientFacade → ClientRegistrationValidator → ClientRepository → MySQL clientes`.
 
 La fachada decide si la operación es válida y única; el repositorio persiste. Esta separación evita que la vista Vue conozca consultas ORM o reglas de negocio.
+
+## Continuación: talleres, clientes por taller y código postal
+
+| Elemento | Estado | Implementación y responsabilidad |
+| --- | --- | --- |
+| Archivo SEPOMEX | Completo | `database/seeds/CPdescarga.txt` se lee en Latin-1; no se versiona mediante `.gitignore`. El importador omite aviso y encabezado. |
+| Tabla `codigos_postales` | Completo | `PostalCode` almacena `cp`, colonia, tipo de asentamiento, municipio y estado; `cp` tiene índice y la combinación de fila evita duplicados. |
+| `import_sepomex` | Completo | `backend/workshop/management/commands/import_sepomex.py` procesa lotes de 1,000 con `bulk_create(ignore_conflicts=True)`, por lo que puede ejecutarse nuevamente sin duplicar. |
+| Consulta postal REST | Completo | `GET /api/codigos-postales/<cp>/` usa `PostalCodeFacade` y `PostalCodeRepository`; entrega estado, municipio, colonias y señal de verificación. |
+| Validación de dirección | Completo | `ClientFacade` y `WorkshopFacade` usan el catálogo cuando existe CP; una combinación distinta se rechaza por campo. CP ausente permite captura manual no verificada. |
+| Tabla `talleres` | Completo | `Workshop` guarda nombre, dirección, razón social, RFC único, contacto y fotografía; nombre+dirección tiene restricción única. |
+| RFC y fotografía | Completo | `validate_workshop` exige RFC mexicano de 12/13 posiciones, teléfono, correo y fotografía PNG/JPG firmada de máximo 15 MB. |
+| Talleres por rol | Completo | GET para Administración/Recepción, POST sólo para Administración tanto en Vue como en Django. |
+| Relación cliente–taller | Completo | `Client.workshop` usa FK `PROTECT`; la migración crea un taller predeterminado y conserva los clientes previos. |
+| Filtros y páginas | Completo | `ClientRepository.list` filtra por taller/estatus, ordena de forma segura y devuelve máximo 10 registros; la API devuelve `total`, `page` y `pages`. |
+| Suspensión | Completo | `ClientFacade.suspend` cambia a `SUSPENDIDO`; API y botón exigen `ADMIN`. |
+| Pruebas | Completo | `ClientRegistrationApiTests` cubre taller duplicado/RFC inválido, rol de Recepción, 12 clientes, páginas, edición, duplicados y suspensión. |
+| Pendiente | No requerido | Edición y detalle de taller no fueron solicitados para esta continuación. |
+
+### Ejecución del catálogo oficial
+
+El archivo descargado de Correos de México se conserva localmente como `database/seeds/CPdescarga.txt`. Para importarlo:
+
+```bash
+docker compose exec backend python manage.py import_sepomex --file /app/database/seeds/CPdescarga.txt
+```
+
+La ejecución validada leyó 159,311 filas y dejó 159,307 registros únicos. Al repetirla, el total se mantuvo. Para `01000`, MySQL devuelve `San Ángel`, `Álvaro Obregón`, `Ciudad de México`, confirmando la conversión correcta de acentos.

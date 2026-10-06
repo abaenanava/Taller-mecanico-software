@@ -1,4 +1,6 @@
 .env
+database/seeds/CPdescarga.txt
+database/seeds/sepomex.txt
 __pycache__/
 *.py[cod]
 node_modules/

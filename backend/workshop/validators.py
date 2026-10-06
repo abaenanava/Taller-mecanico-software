@@ -93,4 +93,32 @@ class ClientRegistrationValidator:
 
         data['age'] = age
         data['birth_date'] = birth_date
+        try:
+            data['workshop_id'] = int(raw_data.get('workshop_id', ''))
+        except (ValueError, TypeError):
+            errors['workshop_id'] = 'Selecciona un taller.'
+        if errors:
+            raise ClientInputError(errors)
+        return data
+
+    def validate_workshop(self, raw_data, photo):
+        fields = ('name', 'street', 'neighborhood', 'municipality', 'state', 'postal_code', 'business_name', 'phone', 'rfc', 'contact_email')
+        data = {field: str(raw_data.get(field, '')).strip().upper() if field == 'rfc' else str(raw_data.get(field, '')).strip() for field in fields}
+        errors = {field: 'Este campo es obligatorio.' for field in fields if not data[field]}
+        phone_digits = re.sub(r'\D', '', data['phone'])
+        if phone_digits.startswith('52') and len(phone_digits) == 12: phone_digits = phone_digits[2:]
+        if len(phone_digits) != 10: errors['phone'] = 'El teléfono debe contener 10 dígitos.'
+        else: data['phone'] = f'+52{phone_digits}'
+        if not re.fullmatch(r'^(?:[A-ZÑ&]{3,4})(?:\d{6})(?:[A-Z0-9]{3})$', data['rfc']): errors['rfc'] = 'Captura un RFC mexicano válido de 12 o 13 caracteres.'
+        if not re.fullmatch(r'\d{5}', data['postal_code']): errors['postal_code'] = 'El código postal debe tener 5 dígitos.'
+        try: validate_email(data['contact_email'])
+        except ValidationError: errors['contact_email'] = 'Captura un correo electrónico válido.'
+        if not photo: errors['photo'] = 'La fotografía es obligatoria.'
+        elif photo.size > self.MAX_PHOTO_SIZE or photo.content_type not in self.ALLOWED_MIME_TYPES: errors['photo'] = 'La fotografía debe ser PNG/JPG y no superar 15 MB.'
+        else:
+            extension = photo.name.rsplit('.', 1)[-1].lower() if '.' in photo.name else ''
+            signature = photo.read(8); photo.seek(0)
+            if extension not in {'jpg', 'jpeg', 'png'} or not ((extension == 'png' and signature.startswith(b'\x89PNG\r\n\x1a\n')) or (extension in {'jpg', 'jpeg'} and signature.startswith(b'\xff\xd8\xff'))):
+                errors['photo'] = 'La fotografía debe ser un archivo PNG o JPG válido.'
+        if errors: raise ClientInputError(errors)
         return data
