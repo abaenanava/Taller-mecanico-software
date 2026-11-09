@@ -5,8 +5,8 @@ from django.middleware.csrf import get_token
 from django.http.multipartparser import MultiPartParser, MultiPartParserError
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 from django.views.decorators.csrf import ensure_csrf_cookie
-from .facades import ClientFacade, PostalCodeFacade, WorkshopFacade
-from .models import WorkOrder, User, Client
+from .facades import ClientFacade, PostalCodeFacade, StatusFacade, VehicleFacade, VehicleUpdateConflict, WorkshopFacade
+from .models import WorkOrder, User
 from .permissions import roles_required
 from .validators import ClientInputError
 
@@ -35,7 +35,8 @@ def client_data(client, request):
         'created_at': client.created_at.isoformat(),
         'workshop_id': client.workshop_id,
         'workshop_name': client.workshop.name if client.workshop_id else None,
-        'status': client.status,
+        'estatus_id': client.estatus_id,
+        'status': client.estatus.name.upper(),
     }
 
 @require_GET
@@ -136,6 +137,53 @@ def client_detail(request, client_id):
         }, status=409)
     return JsonResponse({'detail': 'Cliente actualizado exitosamente', 'client': serialized})
 
+def status_data(item):
+    return {'id': item.id, 'name': item.name, 'description': item.description, 'created_at': item.created_at.isoformat()}
+
+@require_http_methods(['GET', 'POST'])
+@roles_required(User.Role.ADMIN, User.Role.RECEPTION)
+def statuses(request):
+    facade = StatusFacade()
+    if request.method == 'GET':
+        items, total = facade.list(order=request.GET.get('order', 'name'), direction=request.GET.get('direction', 'asc'), page=request.GET.get('page', 1))
+        return JsonResponse({'statuses': [status_data(item) for item in items], 'total': total, 'pages': max((total + 9) // 10, 1), 'page': max(int(request.GET.get('page', 1)), 1)})
+    try: result = facade.create(json.loads(request.body or '{}'))
+    except (json.JSONDecodeError, ClientInputError) as error:
+        return JsonResponse({'detail': 'Revisa los campos marcados.', 'fields': getattr(error, 'fields', {})}, status=422)
+    if not result.created: return JsonResponse({'detail': 'Ya existe un estatus con ese nombre.', 'status': status_data(result.entity)}, status=409)
+    return JsonResponse({'detail': 'Estatus creado exitosamente.', 'status': status_data(result.entity)}, status=201)
+
+@require_http_methods(['GET', 'PUT', 'DELETE'])
+@roles_required(User.Role.ADMIN, User.Role.RECEPTION)
+def status_detail(request, status_id):
+    facade = StatusFacade()
+    if request.method == 'GET':
+        item = facade.get(status_id)
+        return JsonResponse({'detail': 'Estatus no encontrado.'}, status=404) if not item else JsonResponse({'status': status_data(item)})
+    if request.method == 'DELETE':
+        deleted, detail = facade.delete(status_id, request.user)
+        return JsonResponse({'detail': detail or 'Estatus eliminado exitosamente.'}, status=400 if not deleted else 200)
+    try: result = facade.update(status_id, json.loads(request.body or '{}'))
+    except (json.JSONDecodeError, ClientInputError) as error: return JsonResponse({'detail': 'Revisa los campos marcados.', 'fields': getattr(error, 'fields', {})}, status=422)
+    if result is None: return JsonResponse({'detail': 'Estatus no encontrado.'}, status=404)
+    if not result.created: return JsonResponse({'detail': 'Ya existe un estatus con ese nombre.', 'status': status_data(result.entity)}, status=409)
+    return JsonResponse({'detail': 'Estatus actualizado exitosamente.', 'status': status_data(result.entity)})
+
+def vehicle_data(item):
+    return {'id': item.id, 'plate': item.plate, 'brand': item.brand, 'model': item.model, 'vin': item.vin, 'year': item.year, 'version': item.version, 'color': item.color, 'mileage': item.mileage, 'status': item.estatus.name, 'created_at': item.created_at.isoformat()}
+
+@require_http_methods(['GET', 'POST'])
+@roles_required(User.Role.ADMIN, User.Role.RECEPTION)
+def client_vehicles(request, client_id):
+    facade = VehicleFacade()
+    if request.method == 'GET':
+        items, total = facade.list_for_client(client_id, order=request.GET.get('order', 'created_at'), direction=request.GET.get('direction', 'desc'), page=request.GET.get('page', 1))
+        return JsonResponse({'vehicles': [vehicle_data(item) for item in items], 'total': total, 'pages': max((total + 9) // 10, 1), 'page': max(int(request.GET.get('page', 1)), 1)})
+    try: result = facade.create(client_id, json.loads(request.body or '{}'))
+    except (json.JSONDecodeError, ClientInputError) as error: return JsonResponse({'detail': 'Revisa los campos marcados.', 'fields': getattr(error, 'fields', {})}, status=422)
+    if not result.created: return JsonResponse({'detail': 'Ya existe un vehículo con ese VIN o placa.', 'vehicle': vehicle_data(result.entity)}, status=409)
+    return JsonResponse({'detail': 'Vehículo registrado exitosamente.', 'vehicle': vehicle_data(result.entity)}, status=201)
+
 @require_GET
 @roles_required(User.Role.ADMIN, User.Role.RECEPTION)
 def postal_code(request, cp):
@@ -157,18 +205,18 @@ def workshops(request):
     return JsonResponse({'detail': 'Taller guardado exitosamente', 'workshop': workshop_data(result.client, request)}, status=201)
 
 @require_POST
-@roles_required(User.Role.ADMIN)
+@roles_required(User.Role.ADMIN, User.Role.RECEPTION)
 def suspend_client(request, client_id):
-    client = ClientFacade().suspend(client_id)
-    if not client: return JsonResponse({'detail': 'Cliente no encontrado.'}, status=404)
+    client, detail = ClientFacade().suspend(client_id)
+    if not client: return JsonResponse({'detail': detail}, status=400 if detail != 'Cliente no encontrado.' else 404)
     return JsonResponse({'detail': 'Cliente suspendido exitosamente', 'client': client_data(client, request)})
 
 @require_POST
-@roles_required(User.Role.ADMIN)
+@roles_required(User.Role.ADMIN, User.Role.RECEPTION)
 def activate_client(request, client_id):
-    """Reactiva al cliente solicitado; sólo Administración puede cambiar su estatus."""
-    client = ClientFacade().activate(client_id)
-    if not client: return JsonResponse({'detail': 'Cliente no encontrado.'}, status=404)
+    """Reactiva al cliente solicitado; Administración y Recepción pueden cambiar su estatus."""
+    client, detail = ClientFacade().activate(client_id)
+    if not client: return JsonResponse({'detail': detail}, status=400 if detail != 'Cliente no encontrado.' else 404)
     return JsonResponse({'detail': 'Cliente activado exitosamente', 'client': client_data(client, request)})
 
 @require_POST
@@ -189,3 +237,53 @@ def register(request):
     user = User.objects.create_user(username=username, first_name=first_name, password=password, role=User.Role.VIEWER)
     login(request, user)
     return JsonResponse({'user': user_data(user)}, status=201)
+
+
+@require_GET
+@roles_required(User.Role.ADMIN, User.Role.RECEPTION)
+def vehicle_lookup(request):
+    """Consulta exacta; expone solo la identidad del cliente y taller asociados."""
+    try:
+        vehicle = VehicleFacade().lookup(request.GET)
+    except ClientInputError as error:
+        response = JsonResponse({'detail': 'Revisa los campos marcados.', 'fields': error.fields}, status=422)
+    else:
+        if vehicle is None:
+            response = JsonResponse({'detail': 'Vehículo no encontrado.'}, status=404)
+        else:
+            data = vehicle_data(vehicle)
+            data['client'] = {'id': vehicle.client_id, 'full_name': vehicle.client.full_name}
+            data['workshop'] = {'id': vehicle.client.workshop_id, 'name': vehicle.client.workshop.name}
+            response = JsonResponse({'vehicle': data})
+    response['Cache-Control'] = 'private, no-store'
+    return response
+
+
+@require_http_methods(['PATCH'])
+@roles_required(User.Role.ADMIN, User.Role.RECEPTION)
+def vehicle_update(request, vehicle_id):
+    """Modifica únicamente campos editables; ID, VIN y asociaciones son inmutables."""
+    if not 1 <= vehicle_id <= (1 << 63) - 1:
+        response = JsonResponse({'detail': 'Vehículo no encontrado.'}, status=404)
+    elif request.content_type != 'application/json':
+        response = JsonResponse({'detail': 'Revisa los campos marcados.', 'fields': {'body': 'Envía los datos como application/json.'}}, status=422)
+    else:
+        try:
+            payload = json.loads(request.body)
+            vehicle = VehicleFacade().update(vehicle_id, payload)
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            response = JsonResponse({'detail': 'Revisa los campos marcados.', 'fields': {'body': 'El cuerpo debe contener un objeto JSON válido.'}}, status=422)
+        except ClientInputError as error:
+            response = JsonResponse({'detail': 'Revisa los campos marcados.', 'fields': error.fields}, status=422)
+        except VehicleUpdateConflict:
+            response = JsonResponse({'detail': 'La placa ya está registrada en otro vehículo.', 'fields': {'plate': 'Esta placa ya está registrada.'}}, status=409)
+        else:
+            if vehicle is None:
+                response = JsonResponse({'detail': 'Vehículo no encontrado.'}, status=404)
+            else:
+                data = vehicle_data(vehicle)
+                data['client'] = {'id': vehicle.client_id, 'full_name': vehicle.client.full_name}
+                data['workshop'] = {'id': vehicle.client.workshop_id, 'name': vehicle.client.workshop.name}
+                response = JsonResponse({'detail': 'Vehículo actualizado exitosamente.', 'vehicle': data})
+    response['Cache-Control'] = 'private, no-store'
+    return response

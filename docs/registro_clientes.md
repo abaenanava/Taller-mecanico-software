@@ -2,7 +2,7 @@
 
 ## Alcance actual de la fase 02
 
-El sistema permite a `ADMIN` y `RECEPCION` iniciar sesión, registrar, consultar y modificar clientes y talleres. Cada cliente pertenece a un taller obligatorio. Sólo Administración puede suspender o activar clientes; la Recepcionista no recibe esas acciones en la interfaz y el backend también las bloquea.
+El sistema permite a `ADMIN` y `RECEPCION` iniciar sesión, registrar, consultar y modificar clientes y talleres. Cada cliente pertenece a un taller obligatorio. Administración y Recepción pueden suspender o activar clientes; la Recepcionista no recibe esas acciones en la interfaz y el backend también las bloquea.
 
 Las direcciones de talleres y clientes consultan el catálogo SEPOMEX importado. Cuando el CP existe, municipio, estado y colonias se obtienen del catálogo; cuando no existe, la captura manual queda marcada como no verificada.
 

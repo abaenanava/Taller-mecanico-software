@@ -122,3 +122,127 @@ class ClientRegistrationValidator:
                 errors['photo'] = 'La fotografía debe ser un archivo PNG o JPG válido.'
         if errors: raise ClientInputError(errors)
         return data
+
+
+class StatusValidator:
+    """Valida el catálogo sin aceptar nombres vacíos ni variantes de mayúsculas."""
+
+    def validate(self, raw_data):
+        name = str(raw_data.get('name', '')).strip().lower()
+        description = str(raw_data.get('description', '')).strip()
+        errors = {}
+        if not name: errors['name'] = 'El nombre es obligatorio.'
+        elif len(name) > 50: errors['name'] = 'El nombre no debe superar 50 caracteres.'
+        if not description: errors['description'] = 'La descripción es obligatoria.'
+        if errors: raise ClientInputError(errors)
+        return {'name': name, 'description': description}
+
+
+class VehicleValidator:
+    """Normaliza y valida el formulario de vehículos antes de persistirlo."""
+
+    PLATE_PATTERN = r'^[A-Z]{3}-\d{3}-[A-Z]$'
+    VIN_PATTERN = r'^[A-HJ-NPR-Z0-9]{17}$'
+
+    def validate(self, raw_data):
+        fields = ('plate', 'brand', 'model', 'vin', 'year', 'version', 'color')
+        data = {field: str(raw_data.get(field, '')).strip() for field in fields}
+        data['plate'] = data['plate'].upper()
+        data['vin'] = data['vin'].upper().replace(' ', '')
+        errors = {field: 'Este campo es obligatorio.' for field in fields if not data[field]}
+        if data['plate'] and not re.fullmatch(self.PLATE_PATTERN, data['plate']):
+            errors['plate'] = 'La placa debe tener el formato ABC-123-D en mayúsculas.'
+        if data['vin'] and not re.fullmatch(self.VIN_PATTERN, data['vin']):
+            errors['vin'] = 'El VIN debe contener 17 caracteres válidos, sin I, O, Q ni espacios.'
+        for field in ('brand', 'model', 'version', 'color'):
+            if data[field] and len(data[field]) > 50: errors[field] = 'No debe superar 50 caracteres.'
+        try:
+            data['year'] = int(data['year'])
+            if not 1950 <= data['year'] <= date.today().year + 1: raise ValueError
+        except (ValueError, TypeError):
+            errors['year'] = f'El año debe estar entre 1950 y {date.today().year + 1}.'
+        mileage = str(raw_data.get('mileage', '')).strip()
+        if mileage:
+            try:
+                data['mileage'] = int(mileage)
+                if data['mileage'] < 0: raise ValueError
+            except (ValueError, TypeError): errors['mileage'] = 'El kilometraje debe ser un entero mayor o igual a cero.'
+        else: data['mileage'] = None
+        if errors: raise ClientInputError(errors)
+        return data
+
+
+class VehicleLookupValidator:
+    """Consulta un identificador exacto, sin permitir filtros arbitrarios del ORM."""
+
+    FIELDS = {'vin', 'plate', 'id'}
+    MAX_ID = (1 << 63) - 1
+
+    def validate(self, params):
+        errors = {}
+        if set(params) - {'field', 'value'}:
+            errors['field'] = 'La consulta solo admite field y value.'
+        for name in ('field', 'value'):
+            if hasattr(params, 'getlist') and len(params.getlist(name)) > 1:
+                errors[name] = 'Envía este parámetro una sola vez.'
+        field = str(params.get('field', '')).strip()
+        raw_value = str(params.get('value', ''))
+        value = raw_value.strip().upper()
+        if field not in self.FIELDS:
+            errors['field'] = 'Selecciona VIN, placa o ID.'
+        if not value:
+            errors['value'] = 'Captura el identificador del vehículo.'
+        elif len(raw_value) > 128:
+            errors['value'] = 'El identificador enviado es demasiado largo.'
+        elif field == 'id':
+            if not re.fullmatch(r'[0-9]{1,19}', value) or not 1 <= int(value) <= self.MAX_ID:
+                errors['value'] = 'El ID debe ser un entero positivo de hasta 9223372036854775807.'
+            else:
+                value = int(value)
+        elif field == 'vin' and not re.fullmatch(VehicleValidator.VIN_PATTERN, value, flags=re.ASCII):
+            errors['value'] = 'El VIN debe contener 17 caracteres válidos, sin I, O, Q ni espacios.'
+        elif field == 'plate' and not re.fullmatch(VehicleValidator.PLATE_PATTERN, value, flags=re.ASCII):
+            errors['value'] = 'La placa debe tener el formato ABC-123-D.'
+        if errors:
+            raise ClientInputError(errors)
+        return {'field': field, 'value': value}
+
+
+class VehicleUpdateValidator:
+    """PATCH explícito: no admite identificadores, relaciones ni conversión implícita de tipos."""
+
+    EDITABLE_FIELDS = {'plate', 'brand', 'model', 'year', 'version', 'color', 'mileage'}
+    MAX_MILEAGE = (1 << 32) - 1  # PositiveIntegerField se almacena como integer unsigned en MySQL.
+
+    def validate(self, raw_data):
+        if not isinstance(raw_data, dict) or not raw_data:
+            raise ClientInputError({'body': 'Envía un objeto JSON con al menos un campo editable.'})
+        unknown = set(raw_data) - self.EDITABLE_FIELDS
+        if unknown:
+            raise ClientInputError({field: 'Este campo no se puede modificar.' for field in sorted(unknown)})
+        errors = {}
+        data = {}
+        for field, value in raw_data.items():
+            if field in {'plate', 'brand', 'model', 'version', 'color'}:
+                if not isinstance(value, str):
+                    errors[field] = 'Este campo debe ser texto.'
+                    continue
+                value = value.strip()
+                if not value:
+                    errors[field] = 'Este campo es obligatorio.'
+                elif field == 'plate':
+                    value = value.upper()
+                    if not re.fullmatch(VehicleValidator.PLATE_PATTERN, value, flags=re.ASCII):
+                        errors[field] = 'La placa debe tener el formato ABC-123-D.'
+                elif len(value) > 50:
+                    errors[field] = 'No debe superar 50 caracteres.'
+            elif field == 'year':
+                if type(value) is not int or not 1950 <= value <= date.today().year + 1:
+                    errors[field] = f'El año debe ser un entero entre 1950 y {date.today().year + 1}.'
+            elif field == 'mileage':
+                if value is not None and (type(value) is not int or not 0 <= value <= self.MAX_MILEAGE):
+                    errors[field] = 'El kilometraje debe ser null o un entero entre 0 y 4294967295.'
+            data[field] = value
+        if errors:
+            raise ClientInputError(errors)
+        return data

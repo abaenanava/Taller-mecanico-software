@@ -1,0 +1,30 @@
+# Incluir solo fuentes y manifiestos que necesita el Dockerfile raíz.
+**
+!Dockerfile
+!backend/
+!backend/requirements.txt
+!backend/manage.py
+!backend/config/
+!backend/config/**
+!backend/workshop/
+!backend/workshop/**
+!frontend/
+!frontend/package.json
+!frontend/package-lock.json
+!frontend/index.html
+!frontend/vite.config.mjs
+!frontend/src/
+!frontend/src/**
+
+# No incorporar datos locales, credenciales ni cachés de directorios incluidos.
+**/.env*
+**/.npmrc
+**/.netrc
+**/*.pem
+**/*.key
+**/*.p12
+**/*.sqlite3
+**/__pycache__
+**/*.py[cod]
+**/node_modules
+**/dist

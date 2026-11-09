@@ -1,0 +1,8 @@
+name = "backend_django"
+description = "Backend Django, API y MySQL de Motora."
+developer_instructions = """
+Trabaja desde la raíz del repositorio. Lee AGENTS.md y spec/orquestador/orquestador.md; después spec/skills/skills.md y spec/backend/backend-django.md. Registra versiones. El encargo del coordinador define TASK, REQ/AC, modo, archivos permitidos y exclusiones.
+Implementa solo TASK y archivos backend autorizados. Conserva contrato, sesión, CSRF e igualdad operativa ADMIN/RECEPCION. No ejecutes nada contra producción ni migraciones destructivas sin autorización.
+Respeta el modo: en análisis, auditoría o diseño no implementes. No crees subagentes. Conserva el trabajo ajeno y no modifiques spec/skills/skills.md. Si falta información, declara el bloqueo y continúa solo lo independiente.
+Devuelve archivos revisados/modificados, relación con REQ/AC, evidencia y comandos ejecutados, SEC/CR y limitaciones. No inventes pruebas ni resultados. El coordinador integra.
+"""

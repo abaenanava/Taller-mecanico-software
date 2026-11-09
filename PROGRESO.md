@@ -10,8 +10,9 @@
 | Catálogo SEPOMEX | Completo | `PostalCode`, importador idempotente y ruta `GET /api/codigos-postales/<cp>/`. |
 | Validación postal | Completo | Si el CP existe, colonia/municipio/estado deben coincidir; si no existe, la captura queda no verificada. |
 | Listado | Completo | Filtros por taller y estatus, orden `full_name`/`created_at`, y páginas de diez elementos. |
-| Estatus de cliente | Completo | Sólo Administración puede suspender con `POST /api/clients/<id>/suspend/` o reactivar con `POST /api/clients/<id>/activate/`; no se borra el cliente. |
+| Estatus de cliente | Completo | Administración y Recepción pueden suspender con `POST /api/clients/<id>/suspend/` o reactivar con `POST /api/clients/<id>/activate/`; no se borra el cliente. |
 | Esquema de cliente | Completo | Migraciones `0005` y `0006` mantienen la FK del taller, estatus y longitudes de dirección alineadas con el modelo Django. |
+| Estatus, eliminación suave y vehículos | Completo | Migraciones `0007`–`0009` agregan estatus, vehículos, `deleted_at`, unicidad activa por columnas generadas, Facades REST, modal de edición y registro de vehículo. |
 | Verificación final local | Completo | 8 pruebas Django y compilación Vite superadas; una segunda importación añadió 0 filas. |
 | Pendiente | Operativo | Carga inicial de credenciales autorizadas requiere variables `SEED_*` y el comando existente. |
 

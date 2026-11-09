@@ -10,6 +10,8 @@ La documentación del registro de clientes y su diagrama están en [`docs/regist
 docker compose up --build
 ```
 
+Compose usa el editor estándar de MySQL (`DB_COMPAT_TIDB=False`). Para TiDB configura `DB_COMPAT_TIDB=True` antes de migrar. Consulta [la guía de despliegue](DEPLOY.md) para configurar TLS en TiDB Cloud.
+
 ## Códigos postales SEPOMEX
 
 Guarda el TXT oficial descargado desde la página `CodigoPostal_Exportar` de Correos de México en `database/seeds/CPdescarga.txt`. El archivo no se versiona. Con los contenedores levantados, impórtalo una vez (el comando se puede repetir sin duplicar filas):
